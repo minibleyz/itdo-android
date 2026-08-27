@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import ru.itdo.app.core.AppContainer
 import ru.itdo.app.data.model.Conversation
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatsListScreen(container: AppContainer, onOpenConversation: (Int) -> Unit) {
     var conversations by remember { mutableStateOf<List<Conversation>>(emptyList()) }
@@ -43,7 +44,7 @@ fun ChatsListScreen(container: AppContainer, onOpenConversation: (Int) -> Unit) 
                             },
                             modifier = Modifier.clickable { onOpenConversation(conv.id) }
                         )
-                        Divider()
+                        HorizontalDivider()
                     }
                 }
             }
