@@ -12,7 +12,8 @@ data class User(
     val bio: String? = null,
     @SerialName("is_admin") val isAdmin: Boolean = false,
     @SerialName("followers_count") val followersCount: Int = 0,
-    @SerialName("following_count") val followingCount: Int = 0
+    @SerialName("following_count") val followingCount: Int = 0,
+    @SerialName("is_following") val isFollowing: Boolean = false
 )
 
 @Serializable
@@ -25,6 +26,9 @@ data class Post(
     @SerialName("comments_count") val commentsCount: Int = 0,
     @SerialName("reposts_count") val repostsCount: Int = 0,
     @SerialName("liked_by_me") val likedByMe: Boolean = false,
+    @SerialName("liked") val liked: Boolean = false,
+    val bookmarked: Boolean = false,
+    @SerialName("my_reaction") val myReaction: String? = null,
     @SerialName("created_at") val createdAt: Long = 0
 )
 
@@ -33,6 +37,79 @@ data class FeedResponse(
     val posts: List<Post> = emptyList(),
     val page: Int = 1,
     val total: Int = 0,
+    val error: String? = null
+)
+
+@Serializable
+data class Comment(
+    val id: Int,
+    val author: User? = null,
+    val text: String? = null,
+    val media: List<String>? = null,
+    @SerialName("likes_count") val likesCount: Int = 0,
+    @SerialName("comments_count") val commentsCount: Int = 0,
+    val liked: Boolean = false,
+    @SerialName("my_reaction") val myReaction: String? = null,
+    @SerialName("created_at") val createdAt: String? = null
+)
+
+@Serializable
+data class CommentsResponse(
+    val comments: List<Comment> = emptyList(),
+    val total: Int = 0,
+    val error: String? = null
+)
+
+@Serializable
+data class UserListResponse(
+    val users: List<User> = emptyList(),
+    val total: Int = 0,
+    val error: String? = null
+)
+
+@Serializable
+data class SearchResponse(
+    val users: List<User> = emptyList(),
+    val posts: List<Post> = emptyList(),
+    val error: String? = null
+)
+
+@Serializable
+data class AppNotification(
+    val id: Int,
+    val type: String? = null,
+    @SerialName("from_user") val fromUser: User? = null,
+    val text: String? = null,
+    @SerialName("is_read") val isRead: Boolean = false,
+    @SerialName("created_at") val createdAt: String? = null
+)
+
+@Serializable
+data class NotificationsResponse(
+    val notifications: List<AppNotification> = emptyList(),
+    val total: Int = 0,
+    val error: String? = null
+)
+
+@Serializable
+data class UnreadCountResponse(
+    val count: Int = 0,
+    val error: String? = null
+)
+
+@Serializable
+data class GroupInfo(
+    val id: Int,
+    val title: String? = null,
+    val description: String? = null,
+    val avatar: String? = null,
+    @SerialName("created_by") val createdBy: Int = 0,
+    val members: List<User> = emptyList()
+)
+
+@Serializable
+data class GroupInfoResponse(
+    val group: GroupInfo? = null,
     val error: String? = null
 )
 
@@ -68,7 +145,8 @@ data class Conversation(
     @SerialName("peer") val peer: User? = null,
     val title: String? = null,
     @SerialName("last_message") val lastMessage: Message? = null,
-    @SerialName("unread_count") val unreadCount: Int = 0
+    @SerialName("unread_count") val unreadCount: Int = 0,
+    @SerialName("is_group") val isGroup: Boolean = false
 )
 
 @Serializable
@@ -116,5 +194,6 @@ data class PlacePixelRequest(
 @Serializable
 data class SimpleOk(
     val ok: Boolean = false,
+    val success: Boolean = false,
     val error: String? = null
 )
