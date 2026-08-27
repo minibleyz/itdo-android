@@ -25,6 +25,7 @@ private val PALETTE = listOf(
  * Реализован простой поллинг; в вебе, вероятно, используется WS
  * (см. api/ws/) — для live-обновлений стоит подключить WebSocket отдельно.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PixelBattleScreen(container: AppContainer) {
     var pixels by remember { mutableStateOf<List<String>>(emptyList()) }
