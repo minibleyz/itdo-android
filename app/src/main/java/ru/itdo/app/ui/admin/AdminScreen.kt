@@ -8,13 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-/**
- * Разделы соответствуют реальным эндпоинтам в /api/admin/*.php сайта:
- * announcements, antibot_settings, automod, bot_conversations, coins,
- * device_bans, ip_bans, logs, mail, posts, posts_bulk_delete, и т.д.
- * Каждый раздел стоит выводить отдельным экраном по мере необходимости —
- * их слишком много, чтобы включать все сразу в первую версию.
- */
+// Разделы соответствуют реальным эндпоинтам в api/admin/*.php сайта:
+// announcements, antibot_settings, automod, bot_conversations, coins,
+// device_bans, ip_bans, logs, mail, posts, posts_bulk_delete, и т.д.
+// Каждый раздел стоит выводить отдельным экраном по мере необходимости —
+// их слишком много, чтобы включать все сразу в первую версию.
 private val SECTIONS = listOf(
     "Логи" to "admin/logs.php",
     "Посты (модерация)" to "admin/posts.php",
@@ -27,6 +25,7 @@ private val SECTIONS = listOf(
     "Почта" to "admin/mail.php"
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminScreen() {
     Scaffold(topBar = { TopAppBar(title = { Text("Админка") }) }) { padding ->
@@ -36,7 +35,7 @@ fun AdminScreen() {
                     headlineContent = { Text(title) },
                     supportingContent = { Text(endpoint) }
                 )
-                Divider()
+                HorizontalDivider()
             }
         }
     }
