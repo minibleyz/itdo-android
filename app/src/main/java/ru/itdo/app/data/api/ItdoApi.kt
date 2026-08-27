@@ -3,15 +3,13 @@ package ru.itdo.app.data.api
 import ru.itdo.app.data.model.*
 import retrofit2.http.*
 
-/**
- * Отражает эндпоинты бэкенда itdo (см. /api/*.php в исходниках сайта).
- * Аутентификация: Bearer access_token (совпадает с cookie-based на вебе,
- * см. bearerToken() в api/config.php).
- *
- * ВАЖНО: имена полей JSON в реальном ответе PHP могут отличаться от тех,
- * что заведены в data/model/Models.kt — сверьте по факту (например, через
- * curl/Postman к своему бэкенду) и поправьте @SerialName при необходимости.
- */
+// Отражает эндпоинты бэкенда itdo (см. файлы api/*.php в исходниках сайта).
+// Аутентификация: Bearer access_token (совпадает с cookie-based на вебе,
+// см. bearerToken() в api/config.php).
+//
+// ВАЖНО: имена полей JSON в реальном ответе PHP могут отличаться от тех,
+// что заведены в data/model/Models.kt — сверьте по факту (например, через
+// curl/Postman к своему бэкенду) и поправьте @SerialName при необходимости.
 interface ItdoApi {
 
     // ---- Auth ----
@@ -50,9 +48,72 @@ interface ItdoApi {
     @GET("posts/get.php")
     suspend fun getPost(@Query("id") id: Int): Post
 
+    @POST("posts/delete.php")
+    suspend fun deletePost(@Body body: Map<String, Int>): SimpleOk
+
+    @POST("posts/edit.php")
+    suspend fun editPost(@Body body: Map<String, String>): SimpleOk
+
+    @POST("posts/repost.php")
+    suspend fun repost(@Body body: Map<String, String>): SimpleOk
+
+    @POST("posts/bookmark.php")
+    suspend fun toggleBookmark(@Body body: Map<String, Int>): SimpleOk
+
+    @GET("posts/bookmarks.php")
+    suspend fun getBookmarks(@Query("page") page: Int = 1): FeedResponse
+
+    @POST("posts/react.php")
+    suspend fun reactToPost(@Body body: Map<String, String>): SimpleOk
+
+    // ---- Comments (posts/reply.php создаёт пост-комментарий, у которого
+    // reply_to = id родительского поста; posts/comments.php их вычитывает) ----
+    @GET("posts/comments.php")
+    suspend fun getComments(@Query("post_id") postId: Int, @Query("page") page: Int = 1): CommentsResponse
+
+    @POST("posts/reply.php")
+    suspend fun addComment(@Body body: Map<String, String>): SimpleOk
+
     // ---- Profile ----
-    @GET("users/get.php")
-    suspend fun getUser(@Query("username") username: String? = null, @Query("id") id: Int? = null): User
+    // ВНИМАНИЕ: реального users/get.php на бэкенде нет — правильный путь
+    // users/profile.php, параметр называется id (принимает и числовой id,
+    // и username — см. users/profile.php: $_GET['id'] ?? $_GET['user_id']).
+    @GET("users/profile.php")
+    suspend fun getUser(@Query("id") id: String): User
+
+    @POST("users/follow.php")
+    suspend fun followUser(@Body body: Map<String, Int>): SimpleOk
+
+    @POST("users/unfollow.php")
+    suspend fun unfollowUser(@Body body: Map<String, Int>): SimpleOk
+
+    @GET("users/followers.php")
+    suspend fun getFollowers(@Query("id") id: String, @Query("page") page: Int = 1): UserListResponse
+
+    @GET("users/following.php")
+    suspend fun getFollowing(@Query("id") id: String, @Query("page") page: Int = 1): UserListResponse
+
+    // ---- Search ----
+    @GET("search/search.php")
+    suspend fun search(
+        @Query("q") query: String,
+        @Query("type") type: String = "all",
+        @Query("page") page: Int = 1
+    ): SearchResponse
+
+    // ---- Notifications ----
+    @GET("notifications/get.php")
+    suspend fun getNotifications(
+        @Query("limit") limit: Int = 20,
+        @Query("offset") offset: Int = 0,
+        @Query("unread_only") unreadOnly: Int = 0
+    ): NotificationsResponse
+
+    @POST("notifications/mark_read.php")
+    suspend fun markNotificationsRead(): SimpleOk
+
+    @GET("notifications/unread_count.php")
+    suspend fun getUnreadNotificationsCount(): UnreadCountResponse
 
     // ---- Messages ----
     @GET("messages/conversations.php")
@@ -63,6 +124,25 @@ interface ItdoApi {
 
     @POST("messages/send.php")
     suspend fun sendMessage(@Body body: SendMessageRequest): SimpleOk
+
+    @POST("messages/react.php")
+    suspend fun reactToMessage(@Body body: Map<String, String>): SimpleOk
+
+    // ---- Groups (групповые чаты поверх messages/*) ----
+    @POST("messages/create_group.php")
+    suspend fun createGroup(@Body body: Map<String, @JvmSuppressWildcards Any>): SimpleOk
+
+    @GET("groups/info.php")
+    suspend fun getGroupInfo(@Query("conv_id") convId: Int): GroupInfoResponse
+
+    @POST("groups/join.php")
+    suspend fun joinGroup(@Body body: Map<String, String>): SimpleOk
+
+    @POST("messages/leave.php")
+    suspend fun leaveGroup(@Body body: Map<String, Int>): SimpleOk
+
+    @POST("groups/add_members.php")
+    suspend fun addGroupMembers(@Body body: Map<String, @JvmSuppressWildcards Any>): SimpleOk
 
     // ---- Pixel battle ----
     @GET("pixelbattle/board.php")
