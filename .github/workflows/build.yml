@@ -45,3 +45,6 @@ jobs:
         with:
           name: itdo-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+
+
+
