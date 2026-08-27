@@ -1,5 +1,6 @@
 package ru.itdo.app.ui.nav
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.ChatBubble
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -104,7 +106,7 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
             }
         }
     }) { padding ->
-        NavHost(nav, startDestination = Tab.Feed.route, modifier = androidx.compose.ui.Modifier.padding(padding)) {
+        NavHost(nav, startDestination = Tab.Feed.route, modifier = Modifier.padding(padding)) {
             composable(Tab.Feed.route) { FeedScreen(container) }
             composable(Tab.Chats.route) {
                 ChatsListScreen(container) { convId -> nav.navigate("chat/$convId") }
