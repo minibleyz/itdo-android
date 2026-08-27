@@ -1,6 +1,7 @@
 package ru.itdo.app.data.api
 
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -31,6 +32,7 @@ class AuthInterceptor(private val tokenStore: TokenStore) : Interceptor {
 }
 
 object NetworkModule {
+    @OptIn(ExperimentalSerializationApi::class)
     private val json = Json { ignoreUnknownKeys = true; isLenient = true; explicitNulls = false }
 
     fun createApi(tokenStore: TokenStore): ItdoApi {
