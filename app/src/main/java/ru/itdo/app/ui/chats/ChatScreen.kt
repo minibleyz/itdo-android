@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -45,7 +45,7 @@ fun ChatScreen(container: AppContainer, conversationId: Int) {
                             load()
                         }
                     }
-                }) { Icon(Icons.Filled.Send, contentDescription = "Отправить") }
+                }) { Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Отправить") }
             }
         }
     ) { padding ->
