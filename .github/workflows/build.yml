@@ -22,13 +22,18 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install Gradle (if needed for wrapper generation)
+        run: |
+          if ! command -v gradle &> /dev/null; then
+            sudo apt-get update
+            sudo apt-get install gradle -y
+          fi
+
       - name: Generate Gradle Wrapper
         run: |
           if [ ! -f gradlew ]; then
             echo "gradlew not found, generating..."
-            gradle wrapper --gradle-version 8.5
-          else
-            echo "gradlew found, using existing"
+            gradle wrapper --gradle-version 8.7
           fi
           chmod +x gradlew
 
