@@ -22,8 +22,15 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Generate Gradle Wrapper
+        run: |
+          if [ ! -f gradlew ]; then
+            echo "gradlew not found, generating..."
+            gradle wrapper --gradle-version 8.5
+          else
+            echo "gradlew found, using existing"
+          fi
+          chmod +x gradlew
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
