@@ -2,52 +2,46 @@ name: Android CI
 
 on:
   push:
-    branches: [ "main", "develop" ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches: [ "main", "master" ]
+  workflow_dispatch: {}
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 20
+      - name: Set up JDK 17 (for Android SDK tools)
         uses: actions/setup-java@v4
         with:
-          java-version: '20'
-          distribution: 'temurin'
-          cache: gradle
+          distribution: temurin
+          java-version: '17'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses || true
-
-      - name: Install required SDK components
+      - name: Install legacy build-tools & platform
         run: |
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          sdkmanager "platforms;android-23" "build-tools;23.0.3"
 
-      - name: Generate Gradle Wrapper
+      - name: Set up JDK 8 (for Gradle 3.5 build)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+
+      - name: Download Gradle 3.5
         run: |
-          if [ ! -f gradlew ]; then
-            echo "📦 Generating Gradle Wrapper..."
-            gradle wrapper --gradle-version 8.10
-            chmod +x gradlew
-          else
-            echo "✅ Gradle Wrapper already exists"
-            chmod +x gradlew
-          fi
+          wget -q https://services.gradle.org/distributions/gradle-3.5-bin.zip -O /tmp/gradle-3.5.zip
+          unzip -q /tmp/gradle-3.5.zip -d /opt
+          echo "/opt/gradle-3.5/bin" >> $GITHUB_PATH
 
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Build debug APK
+        run: gradle assembleDebug --stacktrace
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: itdo-legacy-debug-apk
           path: app/build/outputs/apk/debug/*.apk
