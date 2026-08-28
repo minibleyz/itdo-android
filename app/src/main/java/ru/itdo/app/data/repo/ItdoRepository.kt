@@ -24,6 +24,12 @@ class ItdoRepository(
         return resp
     }
 
+    // Актуальный публичный sitekey hCaptcha + флаг открытой регистрации
+    // (см. api/auth/registration_status.php). Используется, чтобы виджет
+    // hCaptcha на экранах входа/регистрации не зависел от захардкоженного
+    // в BuildConfig значения.
+    suspend fun registrationStatus(): RegistrationStatusResponse = api.registrationStatus()
+
     suspend fun logout() {
         runCatching { api.logout() }
         tokenStore.clear()
