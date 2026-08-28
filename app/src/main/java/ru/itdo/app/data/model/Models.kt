@@ -1,38 +1,34 @@
 package ru.itdo.app.data.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class User(
     val id: Int,
     val username: String,
-    @SerialName("display_name") val displayName: String? = null,
+    @SerializedName("display_name") val displayName: String? = null,
     val avatar: String? = null,
     val bio: String? = null,
-    @SerialName("is_admin") val isAdmin: Boolean = false,
-    @SerialName("followers_count") val followersCount: Int = 0,
-    @SerialName("following_count") val followingCount: Int = 0,
-    @SerialName("is_following") val isFollowing: Boolean = false
+    @SerializedName("is_admin") val isAdmin: Boolean = false,
+    @SerializedName("followers_count") val followersCount: Int = 0,
+    @SerializedName("following_count") val followingCount: Int = 0,
+    @SerializedName("is_following") val isFollowing: Boolean = false
 )
 
-@Serializable
 data class Post(
     val id: Int,
-    @SerialName("author") val author: User? = null,
+    @SerializedName("author") val author: User? = null,
     val text: String? = null,
     val media: List<String>? = null,
-    @SerialName("likes_count") val likesCount: Int = 0,
-    @SerialName("comments_count") val commentsCount: Int = 0,
-    @SerialName("reposts_count") val repostsCount: Int = 0,
-    @SerialName("liked_by_me") val likedByMe: Boolean = false,
-    @SerialName("liked") val liked: Boolean = false,
+    @SerializedName("likes_count") val likesCount: Int = 0,
+    @SerializedName("comments_count") val commentsCount: Int = 0,
+    @SerializedName("reposts_count") val repostsCount: Int = 0,
+    @SerializedName("liked_by_me") val likedByMe: Boolean = false,
+    @SerializedName("liked") val liked: Boolean = false,
     val bookmarked: Boolean = false,
-    @SerialName("my_reaction") val myReaction: String? = null,
-    @SerialName("created_at") val createdAt: Long = 0
+    @SerializedName("my_reaction") val myReaction: String? = null,
+    @SerializedName("created_at") val createdAt: Long = 0
 )
 
-@Serializable
 data class FeedResponse(
     val posts: List<Post> = emptyList(),
     val page: Int = 1,
@@ -40,157 +36,138 @@ data class FeedResponse(
     val error: String? = null
 )
 
-@Serializable
 data class Comment(
     val id: Int,
     val author: User? = null,
     val text: String? = null,
     val media: List<String>? = null,
-    @SerialName("likes_count") val likesCount: Int = 0,
-    @SerialName("comments_count") val commentsCount: Int = 0,
+    @SerializedName("likes_count") val likesCount: Int = 0,
+    @SerializedName("comments_count") val commentsCount: Int = 0,
     val liked: Boolean = false,
-    @SerialName("my_reaction") val myReaction: String? = null,
-    @SerialName("created_at") val createdAt: String? = null
+    @SerializedName("my_reaction") val myReaction: String? = null,
+    @SerializedName("created_at") val createdAt: String? = null
 )
 
-@Serializable
 data class CommentsResponse(
     val comments: List<Comment> = emptyList(),
     val total: Int = 0,
     val error: String? = null
 )
 
-@Serializable
 data class UserListResponse(
     val users: List<User> = emptyList(),
     val total: Int = 0,
     val error: String? = null
 )
 
-@Serializable
 data class SearchResponse(
     val users: List<User> = emptyList(),
     val posts: List<Post> = emptyList(),
     val error: String? = null
 )
 
-@Serializable
 data class AppNotification(
     val id: Int,
     val type: String? = null,
-    @SerialName("from_user") val fromUser: User? = null,
+    @SerializedName("from_user") val fromUser: User? = null,
     val text: String? = null,
-    @SerialName("is_read") val isRead: Boolean = false,
-    @SerialName("created_at") val createdAt: String? = null
+    @SerializedName("is_read") val isRead: Boolean = false,
+    @SerializedName("created_at") val createdAt: String? = null
 )
 
-@Serializable
 data class NotificationsResponse(
     val notifications: List<AppNotification> = emptyList(),
     val total: Int = 0,
     val error: String? = null
 )
 
-@Serializable
 data class UnreadCountResponse(
     val count: Int = 0,
     val error: String? = null
 )
 
-@Serializable
 data class GroupInfo(
     val id: Int,
     val title: String? = null,
     val description: String? = null,
     val avatar: String? = null,
-    @SerialName("created_by") val createdBy: Int = 0,
+    @SerializedName("created_by") val createdBy: Int = 0,
     val members: List<User> = emptyList()
 )
 
-@Serializable
 data class GroupInfoResponse(
     val group: GroupInfo? = null,
     val error: String? = null
 )
 
-@Serializable
 data class LoginRequest(
     val username: String,
     val password: String,
-    @SerialName("totp_code") val totpCode: String? = null,
+    @SerializedName("totp_code") val totpCode: String? = null,
     // ВАЖНО: бэкенд читает именно поле hcaptcha_token, а не "h-captcha-response"
     // (см. api/auth/login.php -> requireLoginCaptcha($body) -> hcaptchaVerify
     // читает $body['hcaptcha_token']; см. api/lib/security.php).
-    @SerialName("hcaptcha_token") val hcaptchaToken: String? = null
+    @SerializedName("hcaptcha_token") val hcaptchaToken: String? = null
 )
 
-@Serializable
 data class AuthResponse(
     val user: User? = null,
-    @SerialName("access_token") val accessToken: String? = null,
-    @SerialName("refresh_token") val refreshToken: String? = null,
+    @SerializedName("access_token") val accessToken: String? = null,
+    @SerializedName("refresh_token") val refreshToken: String? = null,
     val error: String? = null,
-    @SerialName("two_factor_required") val twoFactorRequired: Boolean = false,
+    @SerializedName("two_factor_required") val twoFactorRequired: Boolean = false,
     val banned: Boolean = false
 )
 
-@Serializable
 data class RegisterRequest(
     val username: String,
     val email: String,
     val password: String,
     // ВАЖНО: см. комментарий в LoginRequest — бэкенд ждёт hcaptcha_token
     // (см. api/auth/register.php).
-    @SerialName("hcaptcha_token") val hcaptchaToken: String? = null
+    @SerializedName("hcaptcha_token") val hcaptchaToken: String? = null
 )
 
 /** Ответ api/auth/registration_status.php — актуальный публичный sitekey hCaptcha. */
-@Serializable
 data class RegistrationStatusResponse(
-    @SerialName("captcha_provider") val captchaProvider: String? = null,
-    @SerialName("hcaptcha_sitekey") val hcaptchaSitekey: String? = null,
-    @SerialName("registration_open") val registrationOpen: Boolean = true,
+    @SerializedName("captcha_provider") val captchaProvider: String? = null,
+    @SerializedName("hcaptcha_sitekey") val hcaptchaSitekey: String? = null,
+    @SerializedName("registration_open") val registrationOpen: Boolean = true,
     val error: String? = null
 )
 
-@Serializable
 data class Conversation(
     val id: Int,
-    @SerialName("peer") val peer: User? = null,
+    @SerializedName("peer") val peer: User? = null,
     val title: String? = null,
-    @SerialName("last_message") val lastMessage: Message? = null,
-    @SerialName("unread_count") val unreadCount: Int = 0,
-    @SerialName("is_group") val isGroup: Boolean = false
+    @SerializedName("last_message") val lastMessage: Message? = null,
+    @SerializedName("unread_count") val unreadCount: Int = 0,
+    @SerializedName("is_group") val isGroup: Boolean = false
 )
 
-@Serializable
 data class ConversationsResponse(
     val conversations: List<Conversation> = emptyList(),
     val error: String? = null
 )
 
-@Serializable
 data class Message(
     val id: Int,
-    @SerialName("conversation_id") val conversationId: Int = 0,
-    @SerialName("sender_id") val senderId: Int = 0,
+    @SerializedName("conversation_id") val conversationId: Int = 0,
+    @SerializedName("sender_id") val senderId: Int = 0,
     val text: String? = null,
-    @SerialName("created_at") val createdAt: Long = 0
+    @SerializedName("created_at") val createdAt: Long = 0
 )
 
-@Serializable
 data class MessagesResponse(
     val messages: List<Message> = emptyList(),
     val error: String? = null
 )
 
-@Serializable
 data class SendMessageRequest(
-    @SerialName("conversation_id") val conversationId: Int,
+    @SerializedName("conversation_id") val conversationId: Int,
     val text: String
 )
 
-@Serializable
 data class PixelBoardResponse(
     val width: Int = 0,
     val height: Int = 0,
@@ -198,14 +175,12 @@ data class PixelBoardResponse(
     val error: String? = null
 )
 
-@Serializable
 data class PlacePixelRequest(
     val x: Int,
     val y: Int,
     val color: String
 )
 
-@Serializable
 data class SimpleOk(
     val ok: Boolean = false,
     val success: Boolean = false,
