@@ -28,6 +28,12 @@ interface ItdoApi {
     @POST("auth/refresh.php")
     suspend fun refresh(@Body body: Map<String, String>): AuthResponse
 
+    // Публичный sitekey hCaptcha (+ включена ли регистрация). Используется,
+    // чтобы не хардкодить sitekey в клиенте и подхватывать его смену на
+    // сервере без обновления приложения (см. api/auth/registration_status.php).
+    @GET("auth/registration_status.php")
+    suspend fun registrationStatus(): RegistrationStatusResponse
+
     // ---- Feed / Posts ----
     @GET("feed/get.php")
     suspend fun getFeed(
