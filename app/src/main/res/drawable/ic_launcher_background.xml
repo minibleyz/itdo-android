@@ -2,7 +2,7 @@
 <!--
   Точный фон официальной иконки сайта (assets/icon-512.png), измерен напрямую
   из pixel-данных PNG (RGBA 18,19,24 внутри круга) — это цвет самого рисунка,
-  отличается от --theme-color в manifest.json (#1a1816, цвет сплэш-экрана PWA).
+  отличается от цвета theme-color в manifest.json (#1a1816, цвет сплэш-экрана PWA).
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
