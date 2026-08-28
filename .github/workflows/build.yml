@@ -22,9 +22,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
@@ -34,6 +31,17 @@ jobs:
       - name: Install required SDK components
         run: |
           sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Generate Gradle Wrapper
+        run: |
+          if [ ! -f gradlew ]; then
+            echo "📦 Generating Gradle Wrapper..."
+            gradle wrapper --gradle-version 8.10
+            chmod +x gradlew
+          else
+            echo "✅ Gradle Wrapper already exists"
+            chmod +x gradlew
+          fi
 
       - name: Build with Gradle
         run: ./gradlew assembleDebug --stacktrace
