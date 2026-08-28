@@ -72,30 +72,4 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-}    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.0")
-    
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-}    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
-    
-    // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0'
-    
-    // Dependency Injection (Hilt)
-    implementation 'com.google.dagger:hilt-android:2.55'
-    implementation 'androidx.hilt:hilt-navigation-compose:1.2.0'
-    kapt 'com.google.dagger:hilt-compiler:2.55'
-    
-    // Coil (загрузка изображений)
-    implementation 'io.coil-kt.coil3:coil-compose:3.0.4'
-    
-    // Testing
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
 }
