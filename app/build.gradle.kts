@@ -17,8 +17,11 @@ android {
 
         // Базовый URL API соцсети.
         buildConfigField("String", "API_BASE_URL", "\"https://itdo.bleyzos.ru/api/\"")
-        // hCaptcha site key с вашего бэкенда (см. api/auth/login.php -> requireLoginCaptcha)
-        buildConfigField("String", "HCAPTCHA_SITE_KEY", "\"\"")
+        // Публичный hCaptcha sitekey (см. api/config.php -> HCAPTCHA_SITEKEY на бэкенде).
+        // Это дефолт/фоллбек: при старте приложение сначала пытается получить
+        // актуальный ключ через auth/registration_status.php и использует этот
+        // константный только если запрос не удался (см. LoginScreen/RegisterScreen).
+        buildConfigField("String", "HCAPTCHA_SITE_KEY", "\"5f92e784-d356-42ce-8244-5672a768ae26\"")
     }
 
     buildTypes {
