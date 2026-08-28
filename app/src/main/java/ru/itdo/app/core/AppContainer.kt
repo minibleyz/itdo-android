@@ -8,5 +8,5 @@ import ru.itdo.app.data.repo.ItdoRepository
 class AppContainer(context: Context) {
     val tokenStore = TokenStore(context.applicationContext)
     private val api = NetworkModule.createApi(tokenStore)
-    val repository = ItdoRepository(api, tokenStore)
+    val repository = ItdoRepository(api, tokenStore, NetworkModule.gson)
 }
