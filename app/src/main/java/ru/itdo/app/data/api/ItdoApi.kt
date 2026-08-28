@@ -1,5 +1,6 @@
 package ru.itdo.app.data.api
 
+import retrofit2.Response
 import ru.itdo.app.data.model.*
 import retrofit2.http.*
 
@@ -13,20 +14,26 @@ import retrofit2.http.*
 interface ItdoApi {
 
     // ---- Auth ----
+    // Response<AuthResponse>, а не AuthResponse напрямую: бэкенд отдаёт
+    // содержательный JSON и на не-2xx кодах (two_factor_required — 401,
+    // banned — 403, невалидный hCaptcha — 403, рейт-лимит — 429; см.
+    // api/auth/login.php и requireAuth() в api/config.php). При обычном
+    // suspend-возврате Retrofit на не-2xx бросает HttpException и тело
+    // теряется — поэтому парсим его вручную в ItdoRepository.parseAuth().
     @POST("auth/login.php")
-    suspend fun login(@Body body: LoginRequest): AuthResponse
+    suspend fun login(@Body body: LoginRequest): Response<AuthResponse>
 
     @POST("auth/register.php")
-    suspend fun register(@Body body: RegisterRequest): AuthResponse
+    suspend fun register(@Body body: RegisterRequest): Response<AuthResponse>
 
     @POST("auth/logout.php")
     suspend fun logout(): SimpleOk
 
     @GET("auth/me.php")
-    suspend fun me(): AuthResponse
+    suspend fun me(): Response<AuthResponse>
 
     @POST("auth/refresh.php")
-    suspend fun refresh(@Body body: Map<String, String>): AuthResponse
+    suspend fun refresh(@Body body: Map<String, String>): Response<AuthResponse>
 
     // Публичный sitekey hCaptcha (+ включена ли регистрация). Используется,
     // чтобы не хардкодить sitekey в клиенте и подхватывать его смену на
