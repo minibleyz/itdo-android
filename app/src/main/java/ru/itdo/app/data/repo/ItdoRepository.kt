@@ -1,15 +1,34 @@
 package ru.itdo.app.data.repo
 
+import com.google.gson.Gson
+import retrofit2.Response
 import ru.itdo.app.data.api.ItdoApi
 import ru.itdo.app.data.model.*
 import ru.itdo.app.core.TokenStore
 
 class ItdoRepository(
     private val api: ItdoApi,
-    private val tokenStore: TokenStore
+    private val tokenStore: TokenStore,
+    private val gson: Gson
 ) {
+    // Бэкенд шлёт содержательный JSON и на ошибочных HTTP-кодах — не только
+    // на 200 (two_factor_required -> 401, banned -> 403, невалидный
+    // hCaptcha -> 403, рейт-лимит -> 429; см. api/auth/login.php,
+    // requireAuth() в api/config.php). При обычном suspend-возврате
+    // Retrofit на не-2xx бросает HttpException и тело теряется — поэтому
+    // auth-эндпоинты в ItdoApi возвращают Response<AuthResponse>, а тело
+    // (успешное или ошибочное) разбираем здесь вручную.
+    private fun parseAuth(resp: Response<AuthResponse>): AuthResponse {
+        resp.body()?.let { return it }
+        val raw = resp.errorBody()?.string()
+        if (!raw.isNullOrBlank()) {
+            runCatching { gson.fromJson(raw, AuthResponse::class.java) }.getOrNull()?.let { return it }
+        }
+        return AuthResponse(error = "Ошибка сервера (${resp.code()})")
+    }
+
     suspend fun login(username: String, password: String, captcha: String?, totp: String?): AuthResponse {
-        val resp = api.login(LoginRequest(username, password, totp, captcha))
+        val resp = parseAuth(api.login(LoginRequest(username, password, totp, captcha)))
         if (resp.accessToken != null) {
             tokenStore.save(resp.accessToken, resp.refreshToken)
         }
@@ -17,7 +36,7 @@ class ItdoRepository(
     }
 
     suspend fun register(username: String, email: String, password: String, captcha: String?): AuthResponse {
-        val resp = api.register(RegisterRequest(username, email, password, captcha))
+        val resp = parseAuth(api.register(RegisterRequest(username, email, password, captcha)))
         if (resp.accessToken != null) {
             tokenStore.save(resp.accessToken, resp.refreshToken)
         }
@@ -37,7 +56,18 @@ class ItdoRepository(
 
     suspend fun isLoggedIn(): Boolean = tokenStore.accessTokenOrNull() != null
 
-    suspend fun me(): AuthResponse = api.me()
+    suspend fun me(): AuthResponse = parseAuth(api.me())
+
+    // Ручной рефреш access_token по refresh_token (api/auth/refresh.php).
+    // Сейчас нигде не вызывается автоматически — при протухшем access_token
+    // AppNav.MainTabs просто разлогинивает пользователя, см. me().
+    suspend fun refresh(refreshToken: String): AuthResponse {
+        val resp = parseAuth(api.refresh(mapOf("refresh_token" to refreshToken)))
+        if (resp.accessToken != null) {
+            tokenStore.save(resp.accessToken, resp.refreshToken)
+        }
+        return resp
+    }
 
     // ---- Feed / Posts ----
     suspend fun feed(page: Int, tab: String) = api.getFeed(page, tab)
