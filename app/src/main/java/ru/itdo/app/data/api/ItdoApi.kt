@@ -9,7 +9,7 @@ import retrofit2.http.*
 //
 // ВАЖНО: имена полей JSON в реальном ответе PHP могут отличаться от тех,
 // что заведены в data/model/Models.kt — сверьте по факту (например, через
-// curl/Postman к своему бэкенду) и поправьте @SerialName при необходимости.
+// curl/Postman к своему бэкенду) и поправьте @SerializedName при необходимости.
 interface ItdoApi {
 
     // ---- Auth ----
@@ -160,7 +160,7 @@ interface ItdoApi {
     // ---- Admin (в исходнике admin.html на порядок больше эндпоинтов —
     // logs/coins/ip_bans/device_bans/mail/automod и т.д. Добавляйте по мере надобности) ----
     @GET("admin/logs.php")
-    suspend fun adminLogs(@Query("page") page: Int = 1): Map<String, kotlinx.serialization.json.JsonElement>
+    suspend fun adminLogs(@Query("page") page: Int = 1): Map<String, @JvmSuppressWildcards Any>
 
     @GET("admin/posts.php")
     suspend fun adminPosts(@Query("page") page: Int = 1): FeedResponse
