@@ -1,15 +1,14 @@
 package ru.itdo.app.data.api
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import ru.itdo.app.BuildConfig
 import ru.itdo.app.core.TokenStore
 
@@ -32,8 +31,9 @@ class AuthInterceptor(private val tokenStore: TokenStore) : Interceptor {
 }
 
 object NetworkModule {
-    @OptIn(ExperimentalSerializationApi::class)
-    private val json = Json { ignoreUnknownKeys = true; isLenient = true; explicitNulls = false }
+    private val gson: Gson = GsonBuilder()
+        .setLenient()
+        .create()
 
     fun createApi(tokenStore: TokenStore): ItdoApi {
         val logging = HttpLoggingInterceptor().apply {
@@ -44,11 +44,10 @@ object NetworkModule {
             .addInterceptor(logging)
             .build()
 
-        val contentType = "application/json".toMediaType()
         val retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.API_BASE_URL)
             .client(client)
-            .addConverterFactory(json.asConverterFactory(contentType))
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
 
         return retrofit.create(ItdoApi::class.java)
