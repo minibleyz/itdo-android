@@ -25,6 +25,7 @@ import ru.itdo.app.ui.auth.LoginScreen
 import ru.itdo.app.ui.auth.RegisterScreen
 import ru.itdo.app.ui.chats.ChatScreen
 import ru.itdo.app.ui.chats.ChatsListScreen
+import ru.itdo.app.ui.components.ItdoLoadingScreen
 import ru.itdo.app.ui.feed.FeedScreen
 import ru.itdo.app.ui.pixelbattle.PixelBattleScreen
 import ru.itdo.app.ui.profile.ProfileScreen
@@ -49,7 +50,7 @@ fun AppNav(container: AppContainer) {
     LaunchedEffect(Unit) { loggedIn = container.repository.isLoggedIn() }
 
     when (loggedIn) {
-        null -> Unit // сплэш/загрузка
+        null -> ItdoLoadingScreen() // сплэш/загрузка — стиль #app-loading из веба
         false -> NavHost(rootNav, startDestination = ROUTE_LOGIN) {
             composable(ROUTE_LOGIN) {
                 LoginScreen(
@@ -83,7 +84,18 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
     var isAdmin by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        runCatching { container.repository.me() }.onSuccess { isAdmin = it.user?.isAdmin == true }
+        val resp = runCatching { container.repository.me() }.getOrNull()
+        when {
+            resp?.user != null -> isAdmin = resp.user.isAdmin
+            // access_token невалиден/протух (сервер ответил error на auth/me.php,
+            // см. requireAuth() в api/config.php) — раньше это молча проглатывалось
+            // (HttpException терялся в runCatching) и пользователь застревал на
+            // главном экране без сессии. Теперь явно разлогиниваем.
+            resp?.error != null -> {
+                container.repository.logout()
+                onLoggedOut()
+            }
+        }
     }
 
     val tabs = buildList {
