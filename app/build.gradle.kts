@@ -54,7 +54,10 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.2.1")
+    // Material 3 Expressive: стабильной версии с Expressive ещё нет, нужна альфа
+    // ветки 1.5.0 (перекрывает версию material3 из compose-bom выше).
+    // См. https://developer.android.com/jetpack/androidx/releases/compose-material3
+    implementation("androidx.compose.material3:material3:1.5.0-alpha08")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")

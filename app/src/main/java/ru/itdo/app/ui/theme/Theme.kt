@@ -1,14 +1,18 @@
 package ru.itdo.app.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-// Строго Material3 ColorScheme, но со значениями из фирменной палитры сайта
-// (см. Color.kt) — чтобы клиент не выглядел как generic M3-демо со стоковым
-// фиолетовым baseline-цветом, а был частью того же бренда, что и веб-версия.
+// Material 3 Expressive: MaterialExpressiveTheme вместо MaterialTheme +
+// MotionScheme.expressive() — «пружинящие» анимации вместо фиксированных
+// easing/duration старого M3. ColorScheme — та же фирменная палитра сайта
+// (см. Color.kt), конструктор схем (lightColorScheme/darkColorScheme) не
+// изменился между обычным и Expressive M3.
 private val LightColors = lightColorScheme(
     primary = ItdoLightPrimary,
     onPrimary = ItdoLightOnPrimary,
@@ -41,8 +45,13 @@ private val DarkColors = darkColorScheme(
     outline = ItdoDarkOutline
 )
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ItdoTheme(content: @Composable () -> Unit) {
     val colors = if (isSystemInDarkTheme()) DarkColors else LightColors
-    MaterialTheme(colorScheme = colors, content = content)
+    MaterialExpressiveTheme(
+        colorScheme = colors,
+        motionScheme = MotionScheme.expressive(),
+        content = content
+    )
 }
