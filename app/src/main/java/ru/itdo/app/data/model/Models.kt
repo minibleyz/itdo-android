@@ -118,7 +118,10 @@ data class LoginRequest(
     val username: String,
     val password: String,
     @SerialName("totp_code") val totpCode: String? = null,
-    @SerialName("h-captcha-response") val hcaptchaResponse: String? = null
+    // ВАЖНО: бэкенд читает именно поле hcaptcha_token, а не "h-captcha-response"
+    // (см. api/auth/login.php -> requireLoginCaptcha($body) -> hcaptchaVerify
+    // читает $body['hcaptcha_token']; см. api/lib/security.php).
+    @SerialName("hcaptcha_token") val hcaptchaToken: String? = null
 )
 
 @Serializable
@@ -136,7 +139,18 @@ data class RegisterRequest(
     val username: String,
     val email: String,
     val password: String,
-    @SerialName("h-captcha-response") val hcaptchaResponse: String? = null
+    // ВАЖНО: см. комментарий в LoginRequest — бэкенд ждёт hcaptcha_token
+    // (см. api/auth/register.php).
+    @SerialName("hcaptcha_token") val hcaptchaToken: String? = null
+)
+
+/** Ответ api/auth/registration_status.php — актуальный публичный sitekey hCaptcha. */
+@Serializable
+data class RegistrationStatusResponse(
+    @SerialName("captcha_provider") val captchaProvider: String? = null,
+    @SerialName("hcaptcha_sitekey") val hcaptchaSitekey: String? = null,
+    @SerialName("registration_open") val registrationOpen: Boolean = true,
+    val error: String? = null
 )
 
 @Serializable
