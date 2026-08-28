@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Стилизованное воспроизведение лого сайта (/assets/icon-512.png): белое
+  разомкнутое кольцо с точкой внутри на тёмном фоне. Внутри safe zone
+  адаптивной иконки (центральные ~66dp из 108dp), чтобы не обрезалось
+  лаунчерами с круглой/квадратной/каплевидной маской.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Разомкнутое кольцо -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="9"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M43,65.05 A22,22 0 1 1 65,65.05" />
+    <!-- Точка в центре разрыва кольца -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,56 m-8,0 a8,8 0 1 1 16,0 a8,8 0 1 1 -16,0" />
+</vector>
