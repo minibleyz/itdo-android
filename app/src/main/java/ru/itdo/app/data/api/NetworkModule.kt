@@ -31,7 +31,10 @@ class AuthInterceptor(private val tokenStore: TokenStore) : Interceptor {
 }
 
 object NetworkModule {
-    private val gson: Gson = GsonBuilder()
+    // Публичный, а не private: ItdoRepository использует тот же Gson, чтобы
+    // вручную распарсить error body auth-эндпоинтов на не-2xx кодах
+    // (см. ItdoApi.login/register/me/refresh -> Response<AuthResponse>).
+    val gson: Gson = GsonBuilder()
         .setLenient()
         .create()
 
