@@ -10,15 +10,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import ru.itdo.app.BuildConfig
 import ru.itdo.app.core.AppContainer
 
 /**
- * ВНИМАНИЕ: бэкенд требует hCaptcha для каждого входа по паролю (см.
- * api/auth/login.php -> requireLoginCaptcha), кроме случая, когда сразу
- * передаётся totp_code. Для реального прода сюда нужно встроить
- * hCaptcha-виджет через WebView (см. https://docs.hcaptcha.com/) и
- * передать полученный токен в поле captcha. Ниже — поле для ручного
- * ввода токена как временное решение/заглушка на время интеграции.
+ * Бэкенд требует hCaptcha для каждого входа по паролю без TOTP (см.
+ * api/auth/login.php -> requireLoginCaptcha). Sitekey подтягивается с
+ * сервера через auth/registration_status.php; если запрос не удался —
+ * используется дефолт из BuildConfig.HCAPTCHA_SITE_KEY.
  */
 @Composable
 fun LoginScreen(
@@ -29,10 +28,17 @@ fun LoginScreen(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var totp by remember { mutableStateOf("") }
-    var captchaToken by remember { mutableStateOf("") }
+    var sitekey by remember { mutableStateOf(BuildConfig.HCAPTCHA_SITE_KEY) }
+    var captchaToken by remember { mutableStateOf<String?>(null) }
+    var captchaKey by remember { mutableIntStateOf(0) } // для сброса виджета после истечения токена
     var error by remember { mutableStateOf<String?>(null) }
     var loading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        runCatching { container.repository.registrationStatus() }
+            .onSuccess { it.hcaptchaSitekey?.let { key -> if (key.isNotBlank()) sitekey = key } }
+    }
 
     Column(
         modifier = Modifier
@@ -41,7 +47,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("itdo", style = MaterialTheme.typography.headlineMedium)
+        Text("ITDO", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(24.dp))
 
         OutlinedTextField(
@@ -66,13 +72,19 @@ fun LoginScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(Modifier.height(8.dp))
-        OutlinedTextField(
-            value = captchaToken, onValueChange = { captchaToken = it },
-            label = { Text("hCaptcha токен (временно вручную)") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
+
+        // hCaptcha обязателен только при входе без TOTP (см. requireLoginCaptcha
+        // в api/auth/login.php) — если введён код 2FA, виджет не нужен.
+        if (totp.isBlank()) {
+            Spacer(Modifier.height(8.dp))
+            key(captchaKey) {
+                HCaptchaWidget(
+                    sitekey = sitekey,
+                    onToken = { token -> captchaToken = token },
+                    onExpired = { captchaToken = null }
+                )
+            }
+        }
 
         error?.let {
             Spacer(Modifier.height(8.dp))
@@ -89,7 +101,7 @@ fun LoginScreen(
                         container.repository.login(
                             username.trim(),
                             password,
-                            captchaToken.ifBlank { null },
+                            captchaToken,
                             totp.ifBlank { null }
                         )
                     }
@@ -99,14 +111,21 @@ fun LoginScreen(
                             it.accessToken != null -> onLoggedIn()
                             it.twoFactorRequired -> error = "Введите код двухфакторной аутентификации"
                             it.banned -> error = "Аккаунт заблокирован"
-                            else -> error = it.error ?: "Ошибка входа"
+                            else -> {
+                                error = it.error ?: "Ошибка входа"
+                                if ((it.error ?: "").contains("hCaptcha", ignoreCase = true)) {
+                                    captchaToken = null
+                                    captchaKey++ // пересоздать WebView с чистым виджетом
+                                }
+                            }
                         }
                     }.onFailure {
                         error = it.message ?: "Ошибка сети"
                     }
                 }
             },
-            enabled = !loading && username.isNotBlank() && password.isNotBlank(),
+            enabled = !loading && username.isNotBlank() && password.isNotBlank() &&
+                (totp.isNotBlank() || captchaToken != null),
             modifier = Modifier.fillMaxWidth()
         ) {
             if (loading) CircularProgressIndicator(modifier = Modifier.size(18.dp))
