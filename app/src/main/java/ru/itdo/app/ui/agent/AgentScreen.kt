@@ -8,54 +8,51 @@ import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ru.itdo.app.BuildConfig
 import ru.itdo.app.core.AppContainer
-import ru.itdo.app.ui.components.ItdoLoadingScreen
 
 /**
  * Страница ИИ-агента (ai-agent.html) — в отличие от остальных экранов, это
  * не нативная реализация, а полноценный веб-виджет: SSE-стриминг ответов,
  * markdown-рендер, tool-события агента и вся клиентская логика уже написаны
- * и обкатаны в вебе (assets частично инлайн внутри ai-agent.html). Дублировать
- * это нативно в Compose — большой отдельный объём работы, тогда как страница
- * сама по себе не завязана на Discord-подобный UI, а является отдельным
- * self-contained HTML-приложением, которое одинаково хорошо работает в
- * WebView.
+ * и обкатаны в вебе (разметка и скрипты инлайн внутри ai-agent.html).
+ * Дублировать это нативно в Compose — большой отдельный объём работы, тогда
+ * как страница сама по себе не завязана на остальной UI сайта, а является
+ * отдельным self-contained HTML-приложением, которое одинаково хорошо
+ * работает в WebView.
  *
  * ВАЖНО про авторизацию: ai-agent.html аутентифицирует все свои fetch()
  * через `credentials: 'include'`, т.е. полагается на cookie, а НЕ на
  * заголовок Authorization (см. requireAuth() в api/config.php:
  * `bearerToken() ?: $_COOKIE['access_token']`). Мобильное приложение хранит
  * только Bearer JWT в TokenStore — сам по себе WebView его не знает и без
- * дополнительных действий страница показала бы юзера как неавторизованного.
+ * дополнительных действий страница показала бы пользователя неавторизованным.
  * Поэтому перед загрузкой страницы кладём тот же access_token в cookie
  * WebView'а через CookieManager — сервер одинаково принимает токен что из
- * заголовка (родное REST-API), что из cookie (веб-страницы), см. ту же
- * строку в config.php.
+ * заголовка (родное REST API), что из cookie (веб-страницы) — это одна и
+ * та же строка в config.php.
  */
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +61,6 @@ fun AgentScreen(container: AppContainer) {
     val context = LocalContext.current
     var isLoading by remember { mutableStateOf(true) }
     var loadError by remember { mutableStateOf<String?>(null) }
-    var reloadTrigger by remember { mutableStateOf(0) }
     val agentUrl = remember { BuildConfig.SITE_BASE_URL.trimEnd('/') + "/ai-agent.html" }
     val siteHost = remember { agentUrl.toUri().host ?: "" }
 
@@ -76,7 +72,11 @@ fun AgentScreen(container: AppContainer) {
         TopAppBar(
             title = { Text("ИИ-агент") },
             actions = {
-                IconButton(onClick = { reloadTrigger++; webViewRef?.reload() }) {
+                IconButton(onClick = {
+                    loadError = null
+                    isLoading = true
+                    webViewRef?.reload()
+                }) {
                     Icon(Icons.Filled.Refresh, contentDescription = "Обновить")
                 }
             }
@@ -88,7 +88,7 @@ fun AgentScreen(container: AppContainer) {
                     loadError ?: "",
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .padding(24.dp())
+                        .padding(24.dp)
                 )
             } else {
                 AndroidView(
@@ -173,20 +173,13 @@ fun AgentScreen(container: AppContainer) {
         }
     }
 
-    // Токен мог обновиться, пока экран уже открыт (refreshAccessToken в
-    // AuthInterceptor работает независимо от WebView) — не отслеживаем это
-    // построчно, страница агента живёт в рамках одной сессии открытия экрана,
-    // а на следующее открытие AgentScreen соберёт WebView заново со свежим
-    // токеном (composable пересоздаётся при уходе с таба, см. AppNav.kt:
-    // popUpTo(Tab.Feed.route) держит только один экземпляр таба в стеке).
+    // При выходе с экрана останавливаем загрузку — WebView пересоздаётся
+    // заново при следующем открытии таба (см. popUpTo(Tab.Feed.route) в
+    // AppNav.kt), так что свежий токен подставится автоматически.
     DisposableEffect(Unit) {
         onDispose {
-            webViewRef?.apply {
-                stopLoading()
-                webViewRef = null
-            }
+            webViewRef?.stopLoading()
+            webViewRef = null
         }
     }
 }
-
-private fun Int.dp() = androidx.compose.ui.unit.dp(this.toFloat())
