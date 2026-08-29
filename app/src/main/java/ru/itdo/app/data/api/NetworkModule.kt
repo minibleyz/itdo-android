@@ -34,8 +34,19 @@ object NetworkModule {
     // Публичный, а не private: ItdoRepository использует тот же Gson, чтобы
     // вручную распарсить error body auth-эндпоинтов на не-2xx кодах
     // (см. ItdoApi.login/register/me/refresh -> Response<AuthResponse>).
+    //
+    // Lenient*TypeAdapter — бэкенд не гарантирует стабильный JSON-тип для
+    // bool/int/long полей (см. LenientTypeAdapters.kt), без них ответы
+    // с "нестандартным" (но валидным для PHP) представлением падают целиком
+    // с JsonSyntaxException.
     val gson: Gson = GsonBuilder()
         .setLenient()
+        .registerTypeAdapter(Boolean::class.javaObjectType, LenientBooleanTypeAdapter)
+        .registerTypeAdapter(Boolean::class.javaPrimitiveType, LenientBooleanTypeAdapter)
+        .registerTypeAdapter(Int::class.javaObjectType, LenientIntTypeAdapter)
+        .registerTypeAdapter(Int::class.javaPrimitiveType, LenientIntTypeAdapter)
+        .registerTypeAdapter(Long::class.javaObjectType, LenientLongTypeAdapter)
+        .registerTypeAdapter(Long::class.javaPrimitiveType, LenientLongTypeAdapter)
         .create()
 
     fun createApi(tokenStore: TokenStore): ItdoApi {
