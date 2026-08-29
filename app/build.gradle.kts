@@ -57,11 +57,15 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
     implementation("androidx.activity:activity-compose:1.10.0")
 
-    implementation(platform("androidx.compose:compose-bom:2025.02.00"))
+    implementation(platform("androidx.compose:compose-bom:2026.06.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.5.0-alpha08")
+    // Material 3 Expressive API (ButtonGroup, expressive shapes/motion, новые
+    // list items и т.д.) доступны только в alpha-ветке 1.5.0 — стабильный
+    // material3 сейчас 1.4.0 и Expressive не содержит. Версия зафиксирована
+    // явно (а не через BOM), т.к. BOM ещё не тянет alpha-релизы material3.
+    implementation("androidx.compose.material3:material3:1.5.0-alpha24")
     implementation("androidx.compose.material:material-icons-extended")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
