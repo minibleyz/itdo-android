@@ -36,9 +36,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RoundedCornerShape as GfxRoundedCornerShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -539,7 +537,7 @@ private fun ComposerSheet(
         Column(
             Modifier
                 .fillMaxWidth()
-                .clip(GfxRoundedCornerShape(topStart = CornerRadius(20f).x.dp, topEnd = CornerRadius(20f).x.dp))
+                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                 .background(T.background)
                 .clickable(enabled = false) {}
                 .padding(20.dp)
@@ -561,8 +559,7 @@ private fun ComposerSheet(
                     .clip(RoundedCornerShape(16.dp))
                     .background(T.accentPrimary)
                     .clickable(enabled = !posting && text.isNotBlank(), onClick = onSubmit)
-                    .padding(vertical = 14.dp),
-                horizontalAlignment = Alignment.CenterHorizontally.let { Alignment.CenterHorizontally },
+                    .padding(vertical = 14.dp)
             ) {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     if (posting) {
