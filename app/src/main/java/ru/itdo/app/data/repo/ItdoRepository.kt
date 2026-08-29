@@ -59,8 +59,10 @@ class ItdoRepository(
     suspend fun me(): AuthResponse = parseAuth(api.me())
 
     // Ручной рефреш access_token по refresh_token (api/auth/refresh.php).
-    // Сейчас нигде не вызывается автоматически — при протухшем access_token
-    // AppNav.MainTabs просто разлогинивает пользователя, см. me().
+    // Обычно вызывать это напрямую не нужно: TokenAuthenticator в
+    // NetworkModule сам перехватывает 401 на любом запросе и делает то же
+    // самое прозрачно. Этот метод оставлен для явного вызова (например, из
+    // экрана логина/дебага), если понадобится.
     suspend fun refresh(refreshToken: String): AuthResponse {
         val resp = parseAuth(api.refresh(mapOf("refresh_token" to refreshToken)))
         if (resp.accessToken != null) {
