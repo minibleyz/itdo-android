@@ -3,6 +3,7 @@ package ru.itdo.app.ui.nav
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 import ru.itdo.app.core.AppContainer
 import ru.itdo.app.data.model.User
 import ru.itdo.app.ui.admin.AdminScreen
+import ru.itdo.app.ui.agent.AgentScreen
 import ru.itdo.app.ui.auth.LoginScreen
 import ru.itdo.app.ui.auth.RegisterScreen
 import ru.itdo.app.ui.chats.ChatScreen
@@ -37,6 +39,7 @@ private const val ROUTE_MAIN = "main"
 private sealed class Tab(val route: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector) {
     object Feed : Tab("feed", "Лента", Icons.Filled.Home)
     object Chats : Tab("chats", "Чаты", Icons.Filled.ChatBubble)
+    object Agent : Tab("agent", "Агент", Icons.Filled.AutoAwesome)
     object Pixel : Tab("pixel", "Pixel", Icons.Filled.GridOn)
     object Profile : Tab("profile", "Профиль", Icons.Filled.Person)
     object Admin : Tab("admin", "Админ", Icons.Filled.AdminPanelSettings)
@@ -99,7 +102,7 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
     }
 
     val tabs = buildList {
-        add(Tab.Feed); add(Tab.Chats); add(Tab.Pixel); add(Tab.Profile)
+        add(Tab.Feed); add(Tab.Chats); add(Tab.Agent); add(Tab.Pixel); add(Tab.Profile)
         if (isAdmin) add(Tab.Admin)
     }
     val scope = rememberCoroutineScope()
@@ -130,6 +133,7 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
                 val id = backStackEntry.arguments?.getInt("id") ?: 0
                 ChatScreen(container, id)
             }
+            composable(Tab.Agent.route) { AgentScreen(container) }
             composable(Tab.Pixel.route) { PixelBattleScreen(container) }
             composable(Tab.Profile.route) {
                 ProfileScreen(container) {
