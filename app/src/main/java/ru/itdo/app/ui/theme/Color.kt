@@ -31,3 +31,32 @@ val ItdoDarkOnPrimary = Color(0xFF22190F) // --text-inverse (dark)
 val ItdoDarkSecondary = Color(0xFFB0602F) // --accent-secondary (dark)
 val ItdoDarkError = Color(0xFFE0685A) // --accent-like (dark)
 val ItdoDarkOutline = Color(0xFF4A3E2E) // приближение к rgba(240,228,208,.10) поверх тёмного фона
+
+/**
+ * Палитра из iOS-клиента (ITDOApp/Views/Components/DesignTokens.swift).
+ * Это ДРУГАЯ, чёрно-синяя тема — не совпадает с --bg-primary/--accent-primary
+ * из веба (тёплая бумага выше), т.к. iOS-клиент со своей "Liquid Glass"
+ * дизайн-системой разошёлся с брендом веба. Используется точечно на
+ * экранах, где явно просили выглядеть "как в iOS" (сейчас — лента),
+ * а не как замена ItdoTheme целиком.
+ */
+object IosDesignTokens {
+    val background = Color(0xFF000000)
+    val backgroundSecondary = Color(0xFF222222)
+    val backgroundBlock = Color(0xFF1C1C1C)
+    val backgroundHover = Color(0x14FFFFFF) // white 8%
+    val backgroundActive = Color(0x1FFFFFFF) // white 12%
+
+    val textPrimary = Color(0xFFF5F5F5)
+    val textSecondary = Color(0x80FFFFFF) // white 50%
+
+    val accentPrimary = Color(0xFF0080FF)
+    val accentSecondary = Color(0xFF3B82F6)
+    val accentLike = Color(0xFFF91880)
+    val accentRepost = Color(0xFF00BA7C)
+
+    val border = Color(0x26FFFFFF) // white 15%
+    val borderSubtle = Color(0x0DFFFFFF) // white 5%
+
+    val error = Color(0xFFEF4444)
+}
