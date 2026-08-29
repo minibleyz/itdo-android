@@ -2,31 +2,97 @@ package ru.itdo.app.data.model
 
 import com.google.gson.annotations.SerializedName
 
+// ВАЖНО: `authorFields()` в api/config.php отдаёт объект автора поста с
+// полем "name" (реальное отображаемое имя из БД) — раньше здесь было
+// @SerializedName("display_name"), которого в этом JSON просто не
+// существует, поэтому имя автора никогда не парсилось и везде подставлялся
+// username. Смотри также users/profile.php — там та же БД-запись напрямую,
+// тоже поле "name", не "display_name".
 data class User(
     val id: Int,
     val username: String,
-    @SerializedName("display_name") val displayName: String? = null,
+    @SerializedName("name") val name: String? = null,
     val avatar: String? = null,
     val bio: String? = null,
     @SerializedName("is_admin") val isAdmin: Boolean = false,
+    @SerializedName("is_verified") val isVerified: Boolean = false,
+    @SerializedName("is_nuksta") val isNuksta: Boolean = false,
+    @SerializedName("is_banned") val isBanned: Boolean = false,
+    @SerializedName("pin_choice") val pinChoice: String? = null,
     @SerializedName("followers_count") val followersCount: Int = 0,
     @SerializedName("following_count") val followingCount: Int = 0,
-    @SerializedName("is_following") val isFollowing: Boolean = false
+    @SerializedName("is_following") val isFollowing: Boolean = false,
+    @SerializedName("is_blocked") val isBlocked: Boolean = false
+) {
+    /** Отображаемое имя с фолбэком на username — как displayName у iOS PostAuthor. */
+    val displayName: String get() = name?.takeIf { it.isNotBlank() } ?: username
+}
+
+data class PostMedia(
+    val type: String? = null,
+    val url: String? = null
+)
+
+data class PollOption(
+    val id: Int,
+    val text: String,
+    val votes: Int = 0
+)
+
+data class PostPoll(
+    val options: List<PollOption> = emptyList(),
+    @SerializedName("ends_at") val endsAt: String? = null,
+    /** id варианта, за который проголосовал текущий юзер, либо null. */
+    val voted: Int? = null
+) {
+    val totalVotes: Int get() = options.sumOf { it.votes }
+}
+
+/** Прикреплённый трек — бэкенд шлёт его под ключом "music". */
+data class PostTrack(
+    val title: String? = null,
+    val artist: String? = null,
+    val url: String? = null,
+    val cover: String? = null,
+    val duration: Int = 0
+)
+
+data class PostQuote(
+    val id: Int,
+    val text: String? = null,
+    val media: List<PostMedia>? = null,
+    val music: PostTrack? = null,
+    @SerializedName("created_at") val createdAt: String? = null,
+    val author: User? = null
+)
+
+data class Reaction(
+    val emoji: String,
+    val count: Int = 0,
+    val mine: Boolean = false
 )
 
 data class Post(
     val id: Int,
     @SerializedName("author") val author: User? = null,
     val text: String? = null,
-    val media: List<String>? = null,
+    val media: List<PostMedia>? = null,
+    /** Ключ в JSON — "music", маппим на track (как track на iOS). */
+    @SerializedName("music") val track: PostTrack? = null,
+    val poll: PostPoll? = null,
+    val quote: PostQuote? = null,
+    val reactions: List<Reaction> = emptyList(),
     @SerializedName("likes_count") val likesCount: Int = 0,
     @SerializedName("comments_count") val commentsCount: Int = 0,
     @SerializedName("reposts_count") val repostsCount: Int = 0,
-    @SerializedName("liked_by_me") val likedByMe: Boolean = false,
-    @SerializedName("liked") val liked: Boolean = false,
+    @SerializedName("views_count") val viewsCount: Int = 0,
+    val liked: Boolean = false,
+    val reposted: Boolean = false,
     val bookmarked: Boolean = false,
     @SerializedName("my_reaction") val myReaction: String? = null,
-    @SerializedName("created_at") val createdAt: Long = 0
+    @SerializedName("is_pinned") val isPinned: Boolean = false,
+    @SerializedName("admin_pinned") val adminPinned: Boolean = false,
+    @SerializedName("created_at") val createdAt: String? = null
 )
 
 data class FeedResponse(
@@ -112,7 +178,9 @@ data class LoginRequest(
 
 data class AuthResponse(
     val user: User? = null,
-    @SerializedName("access_token") val accessToken: String? = null,
+    // Бэкенд может отдать токен и как access_token, и как token (см. iOS
+    // AuthResponse.resolvedToken) — принимаем оба через alternate-имя.
+    @SerializedName(value = "access_token", alternate = ["token"]) val accessToken: String? = null,
     @SerializedName("refresh_token") val refreshToken: String? = null,
     val error: String? = null,
     @SerializedName("two_factor_required") val twoFactorRequired: Boolean = false,
