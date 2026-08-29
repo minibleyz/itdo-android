@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
@@ -42,9 +41,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+    // jvmTarget для Kotlin больше не задаётся отдельно: со встроенным
+    // в AGP 9 Kotlin-компилятором он по умолчанию берётся из
+    // compileOptions.targetCompatibility (см. миграционный гайд
+    // https://developer.android.com/build/migrate-to-built-in-kotlin).
 
     buildFeatures {
         compose = true
