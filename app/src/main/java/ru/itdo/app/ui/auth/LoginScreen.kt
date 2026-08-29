@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package ru.itdo.app.ui.auth
 
 import androidx.compose.foundation.layout.*
@@ -93,6 +95,7 @@ fun LoginScreen(
 
         Spacer(Modifier.height(16.dp))
         Button(
+            contentPadding = ButtonDefaults.contentPaddingFor(ButtonDefaults.LargeContainerHeight),
             onClick = {
                 error = null
                 loading = true
@@ -126,10 +129,10 @@ fun LoginScreen(
             },
             enabled = !loading && username.isNotBlank() && password.isNotBlank() &&
                 (totp.isNotBlank() || captchaToken != null),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().heightIn(ButtonDefaults.LargeContainerHeight)
         ) {
-            if (loading) CircularProgressIndicator(modifier = Modifier.size(18.dp))
-            else Text("Войти")
+            if (loading) LoadingIndicator(modifier = Modifier.size(24.dp))
+            else Text("Войти", style = ButtonDefaults.textStyleFor(ButtonDefaults.LargeContainerHeight))
         }
 
         TextButton(onClick = onGoRegister) {

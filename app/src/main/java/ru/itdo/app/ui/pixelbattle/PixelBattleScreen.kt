@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package ru.itdo.app.ui.pixelbattle
 
 import androidx.compose.foundation.background
@@ -56,7 +58,7 @@ fun PixelBattleScreen(container: AppContainer) {
                 }
             }
             if (loading) {
-                Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { CircularProgressIndicator() }
+                Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { LoadingIndicator() }
             } else if (width > 0) {
                 LazyVerticalGrid(columns = GridCells.Fixed(width), modifier = Modifier.fillMaxSize()) {
                     items(pixels.size) { idx ->

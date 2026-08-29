@@ -10,10 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -39,7 +40,7 @@ import ru.itdo.app.core.AppContainer
  * markdown-рендер, tool-события агента и вся клиентская логика уже написаны
  * и обкатаны в вебе (разметка и скрипты инлайн внутри ai-agent.html).
  * Дублировать это нативно в Compose — большой отдельный объём работы, тогда
- * как страница сама по себе не завязана на остальной UI сайта, а является
+ * как страница сама по себе не завязана на остальном UI сайта, а является
  * отдельным self-contained HTML-приложением, которое одинаково хорошо
  * работает в WebView.
  *
@@ -55,7 +56,7 @@ import ru.itdo.app.core.AppContainer
  * та же строка в config.php.
  */
 @SuppressLint("SetJavaScriptEnabled")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AgentScreen(container: AppContainer) {
     val context = LocalContext.current
@@ -64,8 +65,6 @@ fun AgentScreen(container: AppContainer) {
     val agentUrl = remember { BuildConfig.SITE_BASE_URL.trimEnd('/') + "/ai-agent.html" }
     val siteHost = remember { agentUrl.toUri().host ?: "" }
 
-    // WebView живёт вне Compose-рекомпозиций — держим ссылку, чтобы кнопка
-    // "обновить" в топбаре могла дёрнуть reload() без пересоздания вьюхи.
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
 
     Scaffold(topBar = {
@@ -98,9 +97,6 @@ fun AgentScreen(container: AppContainer) {
                             webViewRef = this
                             settings.javaScriptEnabled = true
                             settings.domStorageEnabled = true
-                            // Страница читает/пишет localStorage (последняя открытая
-                            // переписка, выбранная модель, флаг "показывать думание") —
-                            // без domStorageEnabled это тихо не работало бы.
                             settings.databaseEnabled = true
                             settings.mediaPlaybackRequiresUserGesture = false
 
@@ -108,9 +104,6 @@ fun AgentScreen(container: AppContainer) {
                             cookieManager.setAcceptCookie(true)
                             cookieManager.setAcceptThirdPartyCookies(this, true)
 
-                            // Кладём тот же Bearer-токен, которым уже авторизован
-                            // REST API приложения, как cookie для того же домена —
-                            // см. подробное объяснение в комментарии к функции выше.
                             val token = runBlocking { container.tokenStore.accessTokenOrNull() }
                             if (!token.isNullOrEmpty()) {
                                 val cookieAttrs = "; Path=/; Secure; SameSite=Lax"
@@ -128,19 +121,12 @@ fun AgentScreen(container: AppContainer) {
                                     request: WebResourceRequest?,
                                     error: android.webkit.WebResourceError?
                                 ) {
-                                    // Ошибки на под-ресурсах (шрифты, favicon и т.п.) не должны
-                                    // прятать всю страницу за экраном ошибки — реагируем только
-                                    // на провал загрузки главного документа.
                                     if (request?.isForMainFrame == true) {
                                         isLoading = false
                                         loadError = "Не удалось загрузить страницу агента. Проверьте соединение и нажмите обновить."
                                     }
                                 }
 
-                                // Внешние ссылки (например, из markdown-ответа агента) открываем
-                                // в системном браузере, а не внутри этого WebView — иначе
-                                // пользователь мог бы случайно "уйти" со страницы агента без
-                                // возможности вернуться кнопкой назад в приложении.
                                 override fun shouldOverrideUrlLoading(
                                     view: WebView?,
                                     request: WebResourceRequest?
@@ -161,21 +147,17 @@ fun AgentScreen(container: AppContainer) {
                             loadUrl(agentUrl)
                         }
                     },
-                    update = { /* URL/токен выставляются один раз в factory — страница сама
-                                  управляет своим состоянием (SSE, история) при recomposition. */ }
+                    update = { }
                 )
                 if (isLoading) {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                        LoadingIndicator()
                     }
                 }
             }
         }
     }
 
-    // При выходе с экрана останавливаем загрузку — WebView пересоздаётся
-    // заново при следующем открытии таба (см. popUpTo(Tab.Feed.route) в
-    // AppNav.kt), так что свежий токен подставится автоматически.
     DisposableEffect(Unit) {
         onDispose {
             webViewRef?.stopLoading()

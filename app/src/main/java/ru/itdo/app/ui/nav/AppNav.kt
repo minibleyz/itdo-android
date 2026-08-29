@@ -108,11 +108,14 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
     val scope = rememberCoroutineScope()
 
     Scaffold(bottomBar = {
-        NavigationBar {
+        // Material 3 Expressive: ShortNavigationBar — более низкая (по
+        // спецификации Expressive) замена обычному NavigationBar, с тем же
+        // API у пунктов (ShortNavigationBarItem).
+        ShortNavigationBar {
             val backStack by nav.currentBackStackEntryAsState()
             val current = backStack?.destination?.route
             tabs.forEach { tab ->
-                NavigationBarItem(
+                ShortNavigationBarItem(
                     selected = current == tab.route,
                     onClick = { nav.navigate(tab.route) { launchSingleTop = true; popUpTo(Tab.Feed.route) } },
                     icon = { Icon(tab.icon, contentDescription = tab.label) },

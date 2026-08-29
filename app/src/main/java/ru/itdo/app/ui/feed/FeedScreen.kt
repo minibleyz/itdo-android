@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import ru.itdo.app.core.AppContainer
 import ru.itdo.app.data.model.Post
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FeedScreen(container: AppContainer) {
     var posts by remember { mutableStateOf<List<Post>>(emptyList()) }
@@ -58,7 +58,7 @@ fun FeedScreen(container: AppContainer) {
 
             if (loading) {
                 Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                    CircularProgressIndicator()
+                    LoadingIndicator()
                 }
             } else if (error != null) {
                 Text(error!!, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp))

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package ru.itdo.app.ui.chats
 
 import androidx.compose.foundation.clickable
@@ -28,7 +30,7 @@ fun ChatsListScreen(container: AppContainer, onOpenConversation: (Int) -> Unit) 
     Scaffold(topBar = { TopAppBar(title = { Text("Сообщения") }) }) { padding ->
         Column(Modifier.padding(padding)) {
             if (loading) {
-                Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { CircularProgressIndicator() }
+                Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { LoadingIndicator() }
             } else if (error != null) {
                 Text(error!!, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp))
             } else if (conversations.isEmpty()) {

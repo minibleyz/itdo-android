@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package ru.itdo.app.ui.auth
 
 import androidx.compose.foundation.layout.*
@@ -13,7 +15,7 @@ import ru.itdo.app.core.AppContainer
 
 /**
  * hCaptcha обязательна для каждой регистрации (см. api/auth/register.php).
- * Sitekey подтягивается с сервера (auth/registration_status.php), фоллбек —
+ * Sitekey подтягивается с сервера (auth/registration_status.php), фоллбэк —
  * BuildConfig.HCAPTCHA_SITE_KEY.
  */
 @Composable
@@ -67,6 +69,7 @@ fun RegisterScreen(
 
         Spacer(Modifier.height(16.dp))
         Button(
+            contentPadding = ButtonDefaults.contentPaddingFor(ButtonDefaults.LargeContainerHeight),
             onClick = {
                 error = null; loading = true
                 scope.launch {
@@ -89,9 +92,10 @@ fun RegisterScreen(
             },
             enabled = !loading && username.isNotBlank() && email.isNotBlank() &&
                 password.isNotBlank() && captchaToken != null,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().heightIn(ButtonDefaults.LargeContainerHeight)
         ) {
-            if (loading) CircularProgressIndicator(modifier = Modifier.size(18.dp)) else Text("Зарегистрироваться")
+            if (loading) LoadingIndicator(modifier = Modifier.size(24.dp))
+            else Text("Зарегистрироваться", style = ButtonDefaults.textStyleFor(ButtonDefaults.LargeContainerHeight))
         }
 
         TextButton(onClick = onBack) { Text("Назад ко входу") }
