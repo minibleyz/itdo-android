@@ -29,13 +29,87 @@ fun LoginScreen(
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var totp by remember { mutableStateOf("") }
     var sitekey by remember { mutableStateOf(BuildConfig.HCAPTCHA_SITE_KEY) }
     var captchaToken by remember { mutableStateOf<String?>(null) }
     var captchaKey by remember { mutableIntStateOf(0) } // для сброса виджета после истечения токена
     var error by remember { mutableStateOf<String?>(null) }
     var loading by remember { mutableStateOf(false) }
+    var showTwoFactorDialog by remember { mutableStateOf(false) }
+    var twoFactorError by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
+
+    fun doLogin(totpCode: String?) {
+        error = null
+        loading = true
+        scope.launch {
+            val resp = runCatching {
+                container.repository.login(username.trim(), password, captchaToken, totpCode)
+            }
+            loading = false
+            resp.onSuccess {
+                when {
+                    it.accessToken != null -> {
+                        showTwoFactorDialog = false
+                        onLoggedIn()
+                    }
+                    it.twoFactorRequired -> {
+                        // Первая попытка (без totp_code) — сервер просит 2FA.
+                        // Показываем модалку с полем кода, как на iOS, вместо
+                        // постоянного поля на экране логина.
+                        showTwoFactorDialog = true
+                    }
+                    it.banned -> error = "Аккаунт заблокирован"
+                    else -> {
+                        val msg = it.error ?: "Ошибка входа"
+                        if (showTwoFactorDialog) twoFactorError = msg else error = msg
+                        if (msg.contains("hCaptcha", ignoreCase = true)) {
+                            captchaToken = null
+                            captchaKey++ // пересоздать WebView с чистым виджетом
+                        }
+                        // При неверном коде 2FA (msg содержит "двухфакторной") модалка
+                        // просто остаётся открытой с ошибкой — код уже установлен выше.
+                    }
+                }
+            }.onFailure {
+                val msg = it.message ?: "Ошибка сети"
+                if (showTwoFactorDialog) twoFactorError = msg else error = msg
+            }
+        }
+    }
+
+    if (showTwoFactorDialog) {
+        var code by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { showTwoFactorDialog = false; twoFactorError = null },
+            title = { Text("Двухфакторная аутентификация") },
+            text = {
+                Column {
+                    Text("Введите код из приложения-аутентификатора или резервный код")
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = code, onValueChange = { code = it },
+                        label = { Text("Код 2FA") },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    twoFactorError?.let {
+                        Spacer(Modifier.height(8.dp))
+                        Text(it, color = MaterialTheme.colorScheme.error)
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = code.isNotBlank() && !loading,
+                    onClick = { twoFactorError = null; doLogin(code) }
+                ) { Text("Подтвердить") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTwoFactorDialog = false; twoFactorError = null }) { Text("Отмена") }
+            }
+        )
+    }
 
     LaunchedEffect(Unit) {
         runCatching { container.repository.registrationStatus() }
@@ -66,26 +140,22 @@ fun LoginScreen(
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(Modifier.height(8.dp))
-        OutlinedTextField(
-            value = totp, onValueChange = { totp = it },
-            label = { Text("Код 2FA (если включён)") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
-        )
+        // Поле кода 2FA больше не показывается на самом экране — как и на iOS,
+        // оно всплывает отдельной модалкой, только когда сервер реально
+        // ответил two_factor_required (401) на попытку логина без totp_code
+        // (см. api/auth/login.php). До этого момента у пользователя может и
+        // не быть 2FA вообще, так что поле было лишним шумом на экране.
 
         // hCaptcha обязателен только при входе без TOTP (см. requireLoginCaptcha
-        // в api/auth/login.php) — если введён код 2FA, виджет не нужен.
-        if (totp.isBlank()) {
-            Spacer(Modifier.height(8.dp))
-            key(captchaKey) {
-                HCaptchaWidget(
-                    sitekey = sitekey,
-                    onToken = { token -> captchaToken = token },
-                    onExpired = { captchaToken = null }
-                )
-            }
+        // в api/auth/login.php). Пока идёт обычный логин (без 2FA-модалки),
+        // totp всегда пуст на этом экране — виджет нужен постоянно здесь.
+        Spacer(Modifier.height(8.dp))
+        key(captchaKey) {
+            HCaptchaWidget(
+                sitekey = sitekey,
+                onToken = { token -> captchaToken = token },
+                onExpired = { captchaToken = null }
+            )
         }
 
         error?.let {
@@ -96,39 +166,8 @@ fun LoginScreen(
         Spacer(Modifier.height(16.dp))
         Button(
             contentPadding = ButtonDefaults.contentPaddingFor(ButtonDefaults.LargeContainerHeight),
-            onClick = {
-                error = null
-                loading = true
-                scope.launch {
-                    val resp = runCatching {
-                        container.repository.login(
-                            username.trim(),
-                            password,
-                            captchaToken,
-                            totp.ifBlank { null }
-                        )
-                    }
-                    loading = false
-                    resp.onSuccess {
-                        when {
-                            it.accessToken != null -> onLoggedIn()
-                            it.twoFactorRequired -> error = "Введите код двухфакторной аутентификации"
-                            it.banned -> error = "Аккаунт заблокирован"
-                            else -> {
-                                error = it.error ?: "Ошибка входа"
-                                if ((it.error ?: "").contains("hCaptcha", ignoreCase = true)) {
-                                    captchaToken = null
-                                    captchaKey++ // пересоздать WebView с чистым виджетом
-                                }
-                            }
-                        }
-                    }.onFailure {
-                        error = it.message ?: "Ошибка сети"
-                    }
-                }
-            },
-            enabled = !loading && username.isNotBlank() && password.isNotBlank() &&
-                (totp.isNotBlank() || captchaToken != null),
+            onClick = { doLogin(null) },
+            enabled = !loading && username.isNotBlank() && password.isNotBlank() && captchaToken != null,
             modifier = Modifier.fillMaxWidth().heightIn(ButtonDefaults.LargeContainerHeight)
         ) {
             if (loading) LoadingIndicator(modifier = Modifier.size(24.dp))
