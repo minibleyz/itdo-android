@@ -19,6 +19,10 @@ android {
 
         // Базовый URL API соцсети itdo.
         buildConfigField("String", "API_BASE_URL", "\"https://itdo.bleyzos.ru/api/\"")
+        // Базовый URL самого сайта (без /api/) — нужен для WebView-страниц,
+        // которых нет в REST API и которые проще переиспользовать из веба
+        // (сейчас — ai-agent.html, см. ui/agent/AgentScreen.kt).
+        buildConfigField("String", "SITE_BASE_URL", "\"https://itdo.bleyzos.ru/\"")
         // hCaptcha site key — тот же, что используется на вебе (см. login.html).
         buildConfigField("String", "HCAPTCHA_SITE_KEY", "\"5f92e784-d356-42ce-8244-5672a768ae26\"")
     }
