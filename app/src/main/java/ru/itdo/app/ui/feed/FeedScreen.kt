@@ -57,7 +57,7 @@ import ru.itdo.app.data.model.User
  * с синими акцентами вместо фирменной бежевой "тёплой бумаги" сайта.
  * Теперь экран берёт цвета из MaterialTheme.colorScheme, который заведён
  * в ui/theme/Theme.kt (ItdoTheme) на той же палитре, что и остальные
- * экраны приложения (Color.kt: ItdoLight*/ItdoDark*).
+ * экранами приложения (Color.kt: ItdoLight и ItdoDark).
  */
 @Composable
 fun FeedScreen(container: AppContainer) {
