@@ -15,6 +15,26 @@ import retrofit2.converter.gson.GsonConverterFactory
 import ru.itdo.app.BuildConfig
 import ru.itdo.app.core.TokenStore
 
+/**
+ * OkHttp по умолчанию шлёт User-Agent вида "okhttp/4.12.0" — на бэкенде
+ * (api/config.php -> checkAntiBot()/antibotEvaluate()) это распознаётся как
+ * bot-сигнатура (буквально "okhttp" в списке паттернов), а Android/OkHttp
+ * ещё и не шлёт Accept-Language/Referer/Origin, которые тоже штрафуются.
+ * Итог — 80 баллов на каждом POST-запросе (лайк, коммент, отправка
+ * сообщения и т.д.) при пороге антибота 60 = гарантированный автобан по
+ * IP и Device ID прямо из приложения. Заменяем UA на свой собственный —
+ * бэкенд теперь явно узнаёт "ITDO-Android/<versionName>" и не считает его
+ * ботом (см. checkAntiBot() -> $isOwnMobileApp в api/config.php).
+ */
+class UserAgentInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val withUa = chain.request().newBuilder()
+            .header("User-Agent", "ITDO-Android/${BuildConfig.VERSION_NAME}")
+            .build()
+        return chain.proceed(withUa)
+    }
+}
+
 /** Добавляет Authorization: Bearer <access_token> ко всем запросам, кроме auth/login и auth/register. */
 class AuthInterceptor(private val tokenStore: TokenStore) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -149,6 +169,7 @@ object NetworkModule {
         // (lazy), т.к. на момент создания authenticator'а основной api ещё не
         // существует (см. комментарий у TokenAuthenticator).
         val refreshClient = OkHttpClient.Builder()
+            .addInterceptor(UserAgentInterceptor())
             .addInterceptor(logging)
             .build()
         val refreshApi: ItdoApi by lazy {
@@ -161,6 +182,7 @@ object NetworkModule {
         }
 
         val client = OkHttpClient.Builder()
+            .addInterceptor(UserAgentInterceptor())
             .addInterceptor(AuthInterceptor(tokenStore))
             .authenticator(TokenAuthenticator(tokenStore) { refreshApi })
             .addInterceptor(logging)
