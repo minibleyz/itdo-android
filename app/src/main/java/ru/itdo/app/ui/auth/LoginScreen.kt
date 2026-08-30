@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ru.itdo.app.BuildConfig
 import ru.itdo.app.core.AppContainer
-import ru.itdo.app.ui.theme.UnboundedFontFamily
+import ru.itdo.app.ui.theme.rememberUnboundedFontFamily
 
 /**
  * Бэкенд требует hCaptcha для каждого входа по паролю без TOTP (см.
@@ -128,10 +128,13 @@ fun LoginScreen(
         // Логотип-вордмарк — шрифт Unbounded (Google Fonts, Downloadable
         // Fonts, см. ui/theme/Type.kt), начертание Black (900), в семье
         // также зарегистрирован Bold (700) как более лёгкий вариант.
+        // rememberUnboundedFontFamily() сам откатывается на системный
+        // шрифт, если на устройстве нет Google Play Services (типично для
+        // Huawei/Honor без GMS — см. core/DeviceServices.kt).
         Text(
             "ITDO",
             style = MaterialTheme.typography.headlineMedium.copy(
-                fontFamily = UnboundedFontFamily,
+                fontFamily = rememberUnboundedFontFamily(),
                 fontWeight = FontWeight.Black
             )
         )
