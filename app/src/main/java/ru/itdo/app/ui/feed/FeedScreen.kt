@@ -50,14 +50,14 @@ import ru.itdo.app.data.model.PostMedia
 import ru.itdo.app.data.model.PostPoll
 import ru.itdo.app.data.model.PostTrack
 import ru.itdo.app.data.model.User
-import ru.itdo.app.ui.theme.IosDesignTokens as T
 
 /**
- * Лента, свёрстанная 1:1 по ITDOApp/Views/Feed/FeedView.swift +
- * Views/Components/DesignTokens.swift (см. чат) — тёмный фон, табы
- * "Для вас"/"Подписки" с нижней чертой, карточки постов с тем же порядком
- * блоков (пин-лейбл → шапка автора → текст → опрос → трек → медиа →
- * действия) и той же чёрно-синей палитрой.
+ * Лента. Раньше здесь использовалась отдельная чёрно-синяя палитра
+ * IosDesignTokens (копия iOS-клиента) — из-за неё лента выглядела чёрной
+ * с синими акцентами вместо фирменной бежевой "тёплой бумаги" сайта.
+ * Теперь экран берёт цвета из MaterialTheme.colorScheme, который заведён
+ * в ui/theme/Theme.kt (ItdoTheme) на той же палитре, что и остальные
+ * экраны приложения (Color.kt: ItdoLight*/ItdoDark*).
  */
 @Composable
 fun FeedScreen(container: AppContainer) {
@@ -83,7 +83,7 @@ fun FeedScreen(container: AppContainer) {
     Box(
         Modifier
             .fillMaxSize()
-            .background(T.background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(Modifier.fillMaxSize()) {
             TabSwitcher(tab) { tab = it }
@@ -92,13 +92,13 @@ fun FeedScreen(container: AppContainer) {
 
             when {
                 loading && posts.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = T.textPrimary)
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
                 }
                 error != null && posts.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(error!!, color = T.textPrimary.copy(alpha = 0.7f))
+                    Text(error!!, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f))
                 }
                 posts.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Пока нет постов", color = T.textSecondary)
+                    Text("Пока нет постов", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 else -> LazyColumn(
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
@@ -171,7 +171,7 @@ private fun TabSwitcher(tab: String, onTabChange: (String) -> Unit) {
         Modifier
             .fillMaxWidth()
             .height(1.dp)
-            .background(T.border)
+            .background(MaterialTheme.colorScheme.outline)
     )
 }
 
@@ -180,13 +180,13 @@ private fun TabSegment(title: String, selected: Boolean, modifier: Modifier = Mo
     Column(
         modifier
             .clickable(onClick = onClick)
-            .background(if (selected) T.accentPrimary.copy(alpha = 0.08f) else Color.Transparent)
+            .background(if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.08f) else Color.Transparent)
             .padding(vertical = 14.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             title,
-            color = if (selected) T.textPrimary else T.textSecondary,
+            color = if (selected) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
             fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium
         )
@@ -195,7 +195,7 @@ private fun TabSegment(title: String, selected: Boolean, modifier: Modifier = Mo
             Modifier
                 .height(2.dp)
                 .fillMaxWidth(0.6f)
-                .background(if (selected) T.accentPrimary else Color.Transparent)
+                .background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent)
         )
     }
 }
@@ -208,15 +208,15 @@ private fun ComposeBox(onClick: () -> Unit) {
             .padding(horizontal = 16.dp)
             .padding(bottom = 12.dp)
             .clip(RoundedCornerShape(24.dp))
-            .background(T.backgroundBlock)
-            .border(1.dp, T.borderSubtle, RoundedCornerShape(24.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), RoundedCornerShape(24.dp))
             .clickable(onClick = onClick)
             .padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Avatar(url = null, size = 40.dp)
         Spacer(Modifier.width(12.dp))
-        Text("Что происходит?", color = T.textSecondary, fontSize = 17.sp)
+        Text("Что происходит?", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 17.sp)
     }
 }
 
@@ -226,14 +226,14 @@ private fun Avatar(url: String?, size: androidx.compose.ui.unit.Dp) {
         Modifier
             .size(size)
             .clip(CircleShape)
-            .background(T.backgroundSecondary)
-            .border(1.dp, T.textPrimary.copy(alpha = 0.25f), CircleShape),
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .border(1.dp, MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f), CircleShape),
         contentAlignment = Alignment.Center
     ) {
         if (url != null) {
             AsyncImage(model = url, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
         } else {
-            Icon(Icons.Filled.Person, contentDescription = null, tint = T.textSecondary)
+            Icon(Icons.Filled.Person, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -250,17 +250,17 @@ private fun PostCard(
         Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .background(T.backgroundBlock)
-            .border(1.dp, T.borderSubtle, RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), RoundedCornerShape(20.dp))
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         if (post.adminPinned || post.isPinned) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.PushPin, contentDescription = null, tint = T.accentSecondary, modifier = Modifier.size(12.dp))
+                Icon(Icons.Filled.PushPin, contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(12.dp))
                 Spacer(Modifier.width(5.dp))
                 Text(
                     if (post.adminPinned) "Админ закреп" else "Закреплено",
-                    color = T.accentSecondary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold
+                    color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold
                 )
             }
             Spacer(Modifier.height(6.dp))
@@ -270,7 +270,7 @@ private fun PostCard(
 
         post.text?.takeIf { it.isNotBlank() }?.let {
             Spacer(Modifier.height(4.dp))
-            Text(it, color = T.textPrimary, fontSize = 15.sp, lineHeight = 20.sp)
+            Text(it, color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, lineHeight = 20.sp)
             Spacer(Modifier.height(10.dp))
         }
 
@@ -302,16 +302,16 @@ private fun PostHeader(author: User?) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     author?.displayName ?: "—",
-                    color = T.textPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 if (author?.isVerified == true) {
                     Spacer(Modifier.width(4.dp))
-                    Icon(Icons.Filled.Verified, contentDescription = null, tint = T.accentSecondary, modifier = Modifier.size(14.dp))
+                    Icon(Icons.Filled.Verified, contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(14.dp))
                 }
             }
-            Text("@${author?.username ?: ""}", color = T.textSecondary, fontSize = 14.sp)
+            Text("@${author?.username ?: ""}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
         }
     }
 }
@@ -323,15 +323,15 @@ private fun PollView(poll: PostPoll) {
         Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
-            .background(T.backgroundSecondary)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(12.dp)
     ) {
         poll.options.forEach { option ->
             val pct = if (total > 0) option.votes.toFloat() / total else 0f
             Column(Modifier.padding(bottom = 6.dp)) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(option.text, color = T.textPrimary, fontSize = 13.sp)
-                    Text("${(pct * 100).toInt()}%", color = T.textSecondary, fontSize = 11.sp)
+                    Text(option.text, color = MaterialTheme.colorScheme.onBackground, fontSize = 13.sp)
+                    Text("${(pct * 100).toInt()}%", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                 }
                 Spacer(Modifier.height(3.dp))
                 Box(
@@ -339,7 +339,7 @@ private fun PollView(poll: PostPoll) {
                         .fillMaxWidth()
                         .height(6.dp)
                         .clip(RoundedCornerShape(3.dp))
-                        .background(T.backgroundBlock)
+                        .background(MaterialTheme.colorScheme.surface)
                 ) {
                     Box(
                         Modifier
@@ -347,15 +347,15 @@ private fun PollView(poll: PostPoll) {
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(3.dp))
                             .background(
-                                if (option.id == poll.voted) T.accentPrimary
-                                else T.accentPrimary.copy(alpha = 0.5f)
+                                if (option.id == poll.voted) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                             )
                     )
                 }
             }
         }
         if (total > 0) {
-            Text("$total голосов", color = T.textSecondary, fontSize = 11.sp)
+            Text("$total голосов", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
         }
     }
 }
@@ -374,7 +374,7 @@ private fun TrackPlayer(track: PostTrack) {
         Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
-            .background(T.backgroundSecondary)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -382,19 +382,19 @@ private fun TrackPlayer(track: PostTrack) {
             Modifier
                 .size(44.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(T.backgroundHover),
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             if (track.cover != null) {
                 AsyncImage(model = track.cover, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
             } else {
-                Icon(Icons.Filled.MusicNote, contentDescription = null, tint = T.textSecondary)
+                Icon(Icons.Filled.MusicNote, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
         Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
-            Text(track.title ?: "Трек", color = T.textPrimary, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
-            track.artist?.let { Text(it, color = T.textSecondary, fontSize = 11.sp, maxLines = 1) }
+            Text(track.title ?: "Трек", color = MaterialTheme.colorScheme.onBackground, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+            track.artist?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp, maxLines = 1) }
         }
         IconButton(onClick = {
             val url = track.url ?: return@IconButton
@@ -414,7 +414,7 @@ private fun TrackPlayer(track: PostTrack) {
             Icon(
                 if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                 contentDescription = null,
-                tint = T.accentPrimary
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -431,7 +431,7 @@ private fun MediaGallery(media: List<PostMedia>) {
                 .fillMaxWidth()
                 .height(220.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(T.backgroundHover)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         )
     } else {
         LazyVerticalGrid(
@@ -449,7 +449,7 @@ private fun MediaGallery(media: List<PostMedia>) {
                         .fillMaxWidth()
                         .height(140.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(T.backgroundHover)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 )
             }
         }
@@ -468,32 +468,32 @@ private fun ActionsRow(
         ActionButton(
             icon = if (post.liked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
             count = post.likesCount,
-            tint = if (post.liked) T.accentLike else T.textSecondary,
+            tint = if (post.liked) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
             onClick = onLike
         )
         ActionButton(
             icon = Icons.Filled.ChatBubbleOutline,
             count = post.commentsCount,
-            tint = T.textSecondary,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             onClick = onComment
         )
         ActionButton(
             icon = Icons.Filled.Repeat,
             count = post.repostsCount,
-            tint = if (post.reposted) T.accentRepost else T.textSecondary,
+            tint = if (post.reposted) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant,
             onClick = onRepost
         )
         Spacer(Modifier.weight(1f))
         ActionButton(
             icon = if (post.bookmarked) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
             count = 0,
-            tint = if (post.bookmarked) T.accentPrimary else T.textSecondary,
+            tint = if (post.bookmarked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             onClick = onBookmark
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Filled.Visibility, contentDescription = null, tint = T.textSecondary, modifier = Modifier.size(14.dp))
+            Icon(Icons.Filled.Visibility, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp))
             Spacer(Modifier.width(4.dp))
-            Text("${post.viewsCount}", color = T.textSecondary, fontSize = 12.sp)
+            Text("${post.viewsCount}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
         }
     }
 }
@@ -538,16 +538,16 @@ private fun ComposerSheet(
             Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-                .background(T.background)
+                .background(MaterialTheme.colorScheme.background)
                 .clickable(enabled = false) {}
                 .padding(20.dp)
         ) {
-            Text("Новый пост", color = T.textPrimary, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+            Text("Новый пост", color = MaterialTheme.colorScheme.onBackground, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(12.dp))
             OutlinedTextField(
                 value = text,
                 onValueChange = onTextChange,
-                placeholder = { Text("Что происходит?", color = T.textSecondary) },
+                placeholder = { Text("Что происходит?", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
@@ -557,15 +557,15 @@ private fun ComposerSheet(
                 Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(T.accentPrimary)
+                    .background(MaterialTheme.colorScheme.primary)
                     .clickable(enabled = !posting && text.isNotBlank(), onClick = onSubmit)
                     .padding(vertical = 14.dp)
             ) {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     if (posting) {
-                        CircularProgressIndicator(color = T.textPrimary, modifier = Modifier.size(20.dp))
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
                     } else {
-                        Text("Опубликовать", color = T.textPrimary, fontWeight = FontWeight.SemiBold)
+                        Text("Опубликовать", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.SemiBold)
                     }
                 }
             }
