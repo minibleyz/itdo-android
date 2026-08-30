@@ -67,6 +67,9 @@ dependencies {
     // явно (а не через BOM), т.к. BOM ещё не тянет alpha-релизы material3.
     implementation("androidx.compose.material3:material3:1.5.0-alpha24")
     implementation("androidx.compose.material:material-icons-extended")
+    // Downloadable Fonts (Google Fonts) — шрифт Unbounded для логотипа "ITDO"
+    // на экране логина (см. ui/theme/Type.kt). Версия управляется compose-bom.
+    implementation("androidx.compose.ui:ui-text-google-fonts")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
