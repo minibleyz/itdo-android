@@ -8,12 +8,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ru.itdo.app.BuildConfig
 import ru.itdo.app.core.AppContainer
+import ru.itdo.app.ui.theme.UnboundedFontFamily
 
 /**
  * Бэкенд требует hCaptcha для каждого входа по паролю без TOTP (см.
@@ -123,7 +125,16 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("ITDO", style = MaterialTheme.typography.headlineMedium)
+        // Логотип-вордмарк — шрифт Unbounded (Google Fonts, Downloadable
+        // Fonts, см. ui/theme/Type.kt), начертание Black (900), в семье
+        // также зарегистрирован Bold (700) как более лёгкий вариант.
+        Text(
+            "ITDO",
+            style = MaterialTheme.typography.headlineMedium.copy(
+                fontFamily = UnboundedFontFamily,
+                fontWeight = FontWeight.Black
+            )
+        )
         Spacer(Modifier.height(24.dp))
 
         OutlinedTextField(
