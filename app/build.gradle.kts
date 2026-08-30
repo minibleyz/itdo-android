@@ -69,7 +69,19 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     // Downloadable Fonts (Google Fonts) — шрифт Unbounded для логотипа "ITDO"
     // на экране логина (см. ui/theme/Type.kt). Версия управляется compose-bom.
+    // Работает только там, где есть Google Play Services (см.
+    // core/DeviceServices.kt) — на Huawei/Honor без GMS отключается сам.
     implementation("androidx.compose.ui:ui-text-google-fonts")
+
+    // ---- Определение GMS/HMS на устройстве (core/DeviceServices.kt) ----
+    // Только "базовая" проверка доступности, без Maps/Auth/Push и т.п. —
+    // этого достаточно, чтобы понять, живы ли Google Play Services.
+    implementation("com.google.android.gms:play-services-base:18.5.0")
+    // HMS Core Base SDK — тот же смысл, но для Huawei/Honor устройств без
+    // Google (EMUI/MagicOS). Публичный артефакт, требует репозитория
+    // Huawei (см. settings.gradle.kts), учётка/agconnect-services.json
+    // для одной только этой проверки доступности не нужны.
+    implementation("com.huawei.hms:base:6.12.0.300")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
