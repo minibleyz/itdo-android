@@ -25,7 +25,12 @@ class AuthInterceptor(private val tokenStore: TokenStore) : Interceptor {
             path.endsWith("auth/refresh.php")
         if (skip) return chain.proceed(original)
 
-        val token = runBlocking { tokenStore.accessTokenOrNull() }
+        // Чтение из DataStore теоретически может кинуть исключение (битый
+        // preferences-файл на диске, IOException и т.п.) — это не повод
+        // ронять сам HTTP-запрос, просто уходим без заголовка, как
+        // неавторизованный (сервер тогда сам ответит 401, а это уже
+        // обрабатывается в ItdoRepository.safeCall/TokenAuthenticator).
+        val token = runCatching { runBlocking { tokenStore.accessTokenOrNull() } }.getOrNull()
         val newRequest = if (token != null) {
             original.newBuilder().addHeader("Authorization", "Bearer $token").build()
         } else original
@@ -45,12 +50,23 @@ class AuthInterceptor(private val tokenStore: TokenStore) : Interceptor {
  * циклическая зависимость: клиенту с интерцептором нужен authenticator,
  * которому нужен клиент для рефреша), сохраняет новую пару токенов и
  * прозрачно повторяет исходный запрос с новым access_token.
+ *
+ * Если рефреш не удался (в т.ч. если сервер на 401/refresh ответил не
+ * JSON'ом, а голым текстом/html — см. ItdoRepository.parseAuth, там это
+ * тоже поймано) — authenticate() просто возвращает null, и OkHttp отдаёт
+ * исходный 401 вызывающему suspend-методу как обычный HttpException,
+ * который теперь единообразно ловится в ItdoRepository.safeCall, а не
+ * падает необработанным где-то в UI.
  */
 class TokenAuthenticator(
     private val tokenStore: TokenStore,
     private val refreshApi: () -> ItdoApi
 ) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
+        return runCatching { doAuthenticate(response) }.getOrNull()
+    }
+
+    private fun doAuthenticate(response: Response): Request? {
         // Не трогаем сами auth-эндпоинты и не уходим в бесконечный цикл ретраев.
         val path = response.request.url.encodedPath
         if (path.endsWith("auth/login.php") ||
@@ -78,7 +94,8 @@ class TokenAuthenticator(
                             tokenStore.save(body.accessToken, body.refreshToken)
                             body.accessToken
                         } else {
-                            // Рефреш-токен тоже невалиден/протух — разлогиниваем.
+                            // Рефреш-токен тоже невалиден/протух, либо сервер
+                            // ответил не тем JSON, что ожидался — разлогиниваем.
                             tokenStore.clear()
                             null
                         }
