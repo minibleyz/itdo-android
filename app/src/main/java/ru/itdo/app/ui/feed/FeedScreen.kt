@@ -16,22 +16,33 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.ChatBubbleOutline
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonOff
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,12 +63,13 @@ import ru.itdo.app.data.model.PostTrack
 import ru.itdo.app.data.model.User
 
 /**
- * Лента. Раньше здесь использовалась отдельная чёрно-синяя палитра
- * IosDesignTokens (копия iOS-клиента) — из-за неё лента выглядела чёрной
- * с синими акцентами вместо фирменной бежевой "тёплой бумаги" сайта.
- * Теперь экран берёт цвета из MaterialTheme.colorScheme, который заведён
- * в ui/theme/Theme.kt (ItdoTheme) на той же палитре, что и остальные
- * экранами приложения (Color.kt: ItdoLight и ItdoDark).
+ * Лента. По прямому запросу вёрстка/палитра приложения теперь следует
+ * iOS-клиенту (minibleyz/itdo-ios), а не бежевой "тёплой бумаге" веба —
+ * см. ItdoLight*/ItdoDark* в ui/theme/Color.kt, значения взяты из
+ * ITDOApp/Views/Components/DesignTokens.swift. Системные же виджеты
+ * (навигация, меню, индикаторы) остаются на Material 3 Expressive —
+ * это то, на чём уже построен весь остальной Android-код, просто
+ * перекрашенный в эту палитру, а не переписанный на кастомные вью.
  */
 @Composable
 fun FeedScreen(container: AppContainer) {
@@ -68,6 +80,11 @@ fun FeedScreen(container: AppContainer) {
     var showComposer by remember { mutableStateOf(false) }
     var composerText by remember { mutableStateOf("") }
     var posting by remember { mutableStateOf(false) }
+    // Нужен, чтобы решить какой набор пунктов меню показывать (свой пост
+    // vs чужой) — как в iOS FeedView (isMine: post.author?.id == session.
+    // currentUser?.id). MainTabs уже дергает me() при входе, но здесь свой
+    // собственный лёгкий запрос — экран должен работать независимо.
+    var myUserId by remember { mutableStateOf<Int?>(null) }
     val scope = rememberCoroutineScope()
 
     suspend fun load() {
@@ -78,6 +95,9 @@ fun FeedScreen(container: AppContainer) {
         loading = false
     }
 
+    LaunchedEffect(Unit) {
+        runCatching { container.repository.me() }.getOrNull()?.user?.let { myUserId = it.id }
+    }
     LaunchedEffect(tab) { load() }
 
     Box(
@@ -107,6 +127,7 @@ fun FeedScreen(container: AppContainer) {
                     items(posts, key = { it.id }) { post ->
                         PostCard(
                             post = post,
+                            isMine = myUserId != null && post.author?.id == myUserId,
                             onLike = {
                                 scope.launch {
                                     runCatching {
@@ -128,7 +149,16 @@ fun FeedScreen(container: AppContainer) {
                                     runCatching { container.repository.repost(post.id) }
                                     load()
                                 }
-                            }
+                            },
+                            onEdit = { /* TODO: экран редактирования поста, как EditPostView в iOS */ },
+                            onDelete = {
+                                scope.launch {
+                                    runCatching { container.repository.deletePost(post.id) }
+                                    load()
+                                }
+                            },
+                            onReport = { /* TODO: форма жалобы, как в iOS (showReportSheet) */ },
+                            onHideAuthor = { /* TODO: hidden_authors, см. HiddenAuthorsView в iOS */ }
                         )
                     }
                 }
@@ -241,10 +271,15 @@ private fun Avatar(url: String?, size: androidx.compose.ui.unit.Dp) {
 @Composable
 private fun PostCard(
     post: Post,
+    isMine: Boolean,
     onLike: () -> Unit,
     onBookmark: () -> Unit,
     onComment: () -> Unit,
-    onRepost: () -> Unit
+    onRepost: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onReport: () -> Unit,
+    onHideAuthor: () -> Unit
 ) {
     Column(
         Modifier
@@ -266,7 +301,17 @@ private fun PostCard(
             Spacer(Modifier.height(6.dp))
         }
 
-        PostHeader(post.author)
+        Row(verticalAlignment = Alignment.Top) {
+            Box(Modifier.weight(1f)) { PostHeader(post.author) }
+            PostMoreMenu(
+                post = post,
+                isMine = isMine,
+                onEdit = onEdit,
+                onDelete = onDelete,
+                onReport = onReport,
+                onHideAuthor = onHideAuthor
+            )
+        }
 
         post.text?.takeIf { it.isNotBlank() }?.let {
             Spacer(Modifier.height(4.dp))
@@ -290,6 +335,90 @@ private fun PostCard(
         }
 
         ActionsRow(post, onLike, onComment, onRepost, onBookmark)
+    }
+}
+
+/**
+ * Три точки у поста. Набор пунктов и их порядок скопированы с iOS
+ * (ITDOApp/Views/Feed/FeedView.swift, Menu { ... } на карточке поста):
+ * свой пост — ссылка, перевод, редактировать, закрепить, удалить;
+ * чужой — ссылка, перевод, открыть автора, скрыть автора, пожаловаться.
+ * Компонент — DropdownMenu из Material3 (iOS-версия эквивалента SwiftUI
+ * Menu), логика pin/edit/delete/report/hideAuthor пробрасывается наружу —
+ * часть из них пока TODO на уровне FeedScreen (см. вызов PostCard).
+ */
+@Composable
+private fun PostMoreMenu(
+    post: Post,
+    isMine: Boolean,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onReport: () -> Unit,
+    onHideAuthor: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val clipboard = LocalClipboardManager.current
+
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                Icons.Filled.MoreVert,
+                contentDescription = "Ещё",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text("Скопировать ссылку") },
+                leadingIcon = { Icon(Icons.Filled.Link, contentDescription = null) },
+                onClick = {
+                    clipboard.setText(AnnotatedString("https://itdo.bleyzos.ru/post/${post.id}"))
+                    expanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Перевести") },
+                leadingIcon = { Icon(Icons.Filled.Translate, contentDescription = null) },
+                onClick = { expanded = false /* TODO: api/translate.php, как в iOS translate() */ }
+            )
+            if (isMine) {
+                DropdownMenuItem(
+                    text = { Text("Редактировать") },
+                    leadingIcon = { Icon(Icons.Filled.Edit, contentDescription = null) },
+                    onClick = { onEdit(); expanded = false }
+                )
+                DropdownMenuItem(
+                    text = { Text(if (post.isPinned) "Открепить" else "Закрепить") },
+                    leadingIcon = { Icon(Icons.Filled.PushPin, contentDescription = null) },
+                    onClick = { expanded = false /* TODO: pin toggle, как togglePin() в iOS */ }
+                )
+                DropdownMenuItem(
+                    text = { Text("Удалить", color = MaterialTheme.colorScheme.error) },
+                    leadingIcon = {
+                        Icon(Icons.Filled.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error)
+                    },
+                    onClick = { onDelete(); expanded = false }
+                )
+            } else {
+                DropdownMenuItem(
+                    text = { Text("Открыть автора") },
+                    leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null) },
+                    onClick = { expanded = false /* TODO: навигация на UserProfileView-эквивалент */ }
+                )
+                DropdownMenuItem(
+                    text = { Text("Скрыть автора") },
+                    leadingIcon = { Icon(Icons.Filled.PersonOff, contentDescription = null) },
+                    onClick = { onHideAuthor(); expanded = false }
+                )
+                DropdownMenuItem(
+                    text = { Text("Пожаловаться", color = MaterialTheme.colorScheme.error) },
+                    leadingIcon = {
+                        Icon(Icons.Filled.Flag, contentDescription = null, tint = MaterialTheme.colorScheme.error)
+                    },
+                    onClick = { onReport(); expanded = false }
+                )
+            }
+        }
     }
 }
 
