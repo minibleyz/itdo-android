@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.itdo.app.core.AppContainer
 import ru.itdo.app.data.model.Message
@@ -25,7 +26,18 @@ fun ChatScreen(container: AppContainer, conversationId: Int) {
             .onSuccess { messages = it.messages }
     }
 
-    LaunchedEffect(conversationId) { load() }
+    // ВРЕМЕННО: поллинг вместо WebSocket. Веб держит открытый wss://.../ws/
+    // и получает новые сообщения мгновенно; здесь этого нет — раньше
+    // история грузилась один раз при входе и больше никогда не
+    // обновлялась (новое сообщение появлялось только если выйти из
+    // диалога и зайти заново). Правильное решение — OkHttp WebSocket
+    // симметрично вебу; поллинг — быстрый временный фикс, пока WS нет.
+    LaunchedEffect(conversationId) {
+        while (true) {
+            load()
+            delay(3000)
+        }
+    }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Диалог") }) },

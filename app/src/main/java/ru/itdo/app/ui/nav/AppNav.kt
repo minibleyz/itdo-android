@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.PlayCircleFilled
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import ru.itdo.app.ui.auth.LoginScreen
 import ru.itdo.app.ui.auth.RegisterScreen
 import ru.itdo.app.ui.chats.ChatScreen
 import ru.itdo.app.ui.chats.ChatsListScreen
+import ru.itdo.app.ui.clips.ClipsScreen
 import ru.itdo.app.ui.components.ItdoLoadingScreen
 import ru.itdo.app.ui.feed.FeedScreen
 import ru.itdo.app.ui.pixelbattle.PixelBattleScreen
@@ -39,6 +41,7 @@ private const val ROUTE_MAIN = "main"
 private sealed class Tab(val route: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector) {
     object Feed : Tab("feed", "Лента", Icons.Filled.Home)
     object Chats : Tab("chats", "Чаты", Icons.Filled.ChatBubble)
+    object Clips : Tab("clips", "Клипы", Icons.Filled.PlayCircleFilled)
     object Agent : Tab("agent", "Агент", Icons.Filled.AutoAwesome)
     object Pixel : Tab("pixel", "Pixel", Icons.Filled.GridOn)
     object Profile : Tab("profile", "Профиль", Icons.Filled.Person)
@@ -102,7 +105,7 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
     }
 
     val tabs = buildList {
-        add(Tab.Feed); add(Tab.Chats); add(Tab.Agent); add(Tab.Pixel); add(Tab.Profile)
+        add(Tab.Feed); add(Tab.Chats); add(Tab.Clips); add(Tab.Agent); add(Tab.Pixel); add(Tab.Profile)
         if (isAdmin) add(Tab.Admin)
     }
     val scope = rememberCoroutineScope()
@@ -137,6 +140,9 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
                 ChatScreen(container, id)
             }
             composable(Tab.Agent.route) { AgentScreen(container) }
+            composable(Tab.Clips.route) {
+                ClipsScreen(container) { /* TODO: экран чужого профиля ещё не реализован (см. profile) */ }
+            }
             composable(Tab.Pixel.route) { PixelBattleScreen(container) }
             composable(Tab.Profile.route) {
                 ProfileScreen(container) {

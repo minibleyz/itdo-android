@@ -7,6 +7,20 @@ android {
     namespace = "ru.itdo.app"
     compileSdk = 37
 
+    // Фиксированный debug-кейстор (app/debug.keystore, закоммичен в репо),
+    // а не автогенерируемый ~/.android/debug.keystore. Без этого при сборке
+    // на разных машинах/CI получались РАЗНЫЕ debug-ключи — обновление
+    // (install поверх старой версии) падало с "signatures do not match",
+    // приходилось всегда удалять приложение перед переустановкой.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     defaultConfig {
         applicationId = "ru.itdo.app"
         minSdk = 23

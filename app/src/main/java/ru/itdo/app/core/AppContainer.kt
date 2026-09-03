@@ -6,7 +6,8 @@ import ru.itdo.app.data.repo.ItdoRepository
 
 /** Простой ручной DI-контейнер (без Hilt/Koin, чтобы не плодить зависимости). */
 class AppContainer(context: Context) {
-    val tokenStore = TokenStore(context.applicationContext)
+    private val appContext = context.applicationContext
+    val tokenStore = TokenStore(appContext)
     private val api = NetworkModule.createApi(tokenStore)
-    val repository = ItdoRepository(api, tokenStore, NetworkModule.gson)
+    val repository = ItdoRepository(api, tokenStore, NetworkModule.gson, appContext)
 }

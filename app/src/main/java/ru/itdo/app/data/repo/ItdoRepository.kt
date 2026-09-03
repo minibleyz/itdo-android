@@ -2,6 +2,8 @@ package ru.itdo.app.data.repo
 
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
@@ -12,7 +14,8 @@ import ru.itdo.app.core.TokenStore
 class ItdoRepository(
     private val api: ItdoApi,
     private val tokenStore: TokenStore,
-    private val gson: Gson
+    private val gson: Gson,
+    private val appContext: android.content.Context
 ) {
     // Единая точка защиты от "сервер отдал не то, что ожидалось" —
     // 401/403/5xx без JSON-тела, битый/усечённый JSON на 2xx (нестабильный
@@ -244,4 +247,51 @@ class ItdoRepository(
 
     suspend fun placePixel(x: Int, y: Int, color: String): SimpleOk =
         safeCall({ SimpleOk(error = it) }) { api.placePixel(PlacePixelRequest(x, y, color)) }
+
+    // ---- Clips ----
+    suspend fun clips(page: Int = 1): ClipsResponse =
+        safeCall({ ClipsResponse(error = it) }) { api.getClips(page) }
+
+    // type: "like" | "dislike" — как в iOS APIClient.likeClip/dislikeClip,
+    // оба идут через один и тот же clips/vote.php.
+    suspend fun voteClip(clipId: Int, type: String): ClipVoteResponse =
+        safeCall({ ClipVoteResponse(error = it) }) {
+            api.voteClip(mapOf("clip_id" to clipId, "type" to type))
+        }
+
+    suspend fun clipComments(clipId: Int): ClipCommentsResponse =
+        safeCall({ ClipCommentsResponse(error = it) }) { api.getClipComments(clipId) }
+
+    suspend fun addClipComment(clipId: Int, text: String): SimpleOk =
+        safeCall({ SimpleOk(error = it) }) {
+            api.addClipComment(mapOf("clip_id" to clipId, "text" to text))
+        }
+
+    suspend fun uploadClip(bytes: ByteArray, fileName: String, title: String, description: String): ClipUploadResponse =
+        safeCall({ ClipUploadResponse(error = it) }) {
+            val body = bytes.toRequestBody("video/*".toMediaTypeOrNull())
+            val part = okhttp3.MultipartBody.Part.createFormData("video", fileName, body)
+            api.uploadClip(
+                part,
+                title.toRequestBody("text/plain".toMediaTypeOrNull()),
+                description.toRequestBody("text/plain".toMediaTypeOrNull())
+            )
+        }
+
+    // Файлпикер в Compose (rememberLauncherForActivityResult) отдаёт
+    // content:// Uri, а не файл на диске — читаем байты через
+    // ContentResolver и переиспользуем uploadClip(bytes, ...) выше.
+    suspend fun uploadClipFromUri(uri: android.net.Uri, title: String, description: String): ClipUploadResponse {
+        val bytes = appContext.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+            ?: return ClipUploadResponse(error = "Не удалось прочитать файл")
+        val name = queryDisplayName(uri) ?: "clip_${System.currentTimeMillis()}.mp4"
+        return uploadClip(bytes, name, title, description)
+    }
+
+    private fun queryDisplayName(uri: android.net.Uri): String? = runCatching {
+        appContext.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+            val idx = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+            if (idx >= 0 && cursor.moveToFirst()) cursor.getString(idx) else null
+        }
+    }.getOrNull()
 }

@@ -171,4 +171,26 @@ interface ItdoApi {
 
     @GET("admin/posts.php")
     suspend fun adminPosts(@Query("page") page: Int = 1): FeedResponse
+
+    // ---- Clips (см. ITDOApp/Networking/APIClient.swift, секция Clips —
+    // страница сделана 1-в-1 с ClipsView.swift) ----
+    @GET("clips/list.php")
+    suspend fun getClips(@Query("page") page: Int = 1, @Query("limit") limit: Int = 30): ClipsResponse
+
+    @POST("clips/vote.php")
+    suspend fun voteClip(@Body body: Map<String, @JvmSuppressWildcards Any>): ClipVoteResponse
+
+    @GET("clips/comments.php")
+    suspend fun getClipComments(@Query("clip_id") clipId: Int): ClipCommentsResponse
+
+    @POST("clips/comment.php")
+    suspend fun addClipComment(@Body body: Map<String, @JvmSuppressWildcards Any>): SimpleOk
+
+    @Multipart
+    @POST("clips/upload.php")
+    suspend fun uploadClip(
+        @Part video: okhttp3.MultipartBody.Part,
+        @Part("title") title: okhttp3.RequestBody,
+        @Part("description") description: okhttp3.RequestBody
+    ): ClipUploadResponse
 }

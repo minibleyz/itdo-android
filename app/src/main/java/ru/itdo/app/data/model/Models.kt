@@ -254,3 +254,60 @@ data class SimpleOk(
     val success: Boolean = false,
     val error: String? = null
 )
+
+// ---- Clips (api/clips/*.php) — поля списком из list.php (плоский объект,
+// не authorFields()): username/avatar/is_verified прямо на клипе. ----
+data class Clip(
+    val id: Int,
+    @SerializedName("user_id") val userId: Int = 0,
+    val username: String = "",
+    val avatar: String? = null,
+    @SerializedName("is_verified") val isVerified: Boolean = false,
+    val title: String? = null,
+    val description: String? = null,
+    @SerializedName("video_url") val videoUrl: String = "",
+    val likes: Int = 0,
+    val dislikes: Int = 0,
+    val views: Int = 0,
+    @SerializedName("comments_count") val commentsCount: Int = 0,
+    val liked: Boolean = false,
+    val disliked: Boolean = false,
+    @SerializedName("created_at") val createdAt: String? = null
+)
+
+data class ClipsResponse(
+    val clips: List<Clip> = emptyList(),
+    val error: String? = null
+)
+
+// comments.php отдаёт "author": authorFields(user) вложенным объектом,
+// а не username/avatar плоско на комментарии — в отличие от iOS-модели
+// ClipComment, которая (в самом iOS-клиенте) ждёт их плоско и из-за этого
+// у них комментарии к клипам никогда не парсились. Здесь сделано по факту
+// ответа сервера, чтобы реально работало.
+data class ClipComment(
+    val id: Int,
+    val text: String = "",
+    @SerializedName("created_at") val createdAt: String? = null,
+    val author: User? = null
+)
+
+data class ClipCommentsResponse(
+    val comments: List<ClipComment> = emptyList(),
+    val error: String? = null
+)
+
+data class ClipVoteResponse(
+    val success: Boolean = false,
+    val vote: String? = null,
+    val likes: Int = 0,
+    val dislikes: Int = 0,
+    val error: String? = null
+)
+
+data class ClipUploadResponse(
+    val success: Boolean = false,
+    @SerializedName("clip_id") val clipId: Int? = null,
+    @SerializedName("video_url") val videoUrl: String? = null,
+    val error: String? = null
+)
