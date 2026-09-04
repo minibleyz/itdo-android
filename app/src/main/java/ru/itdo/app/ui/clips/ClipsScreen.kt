@@ -254,7 +254,7 @@ private fun ClipPlayerPage(
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     ClipActionButton(
-                        icon = if (clip.liked) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
+                        icon = if (clip.liked) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUpOffAlt,
                         label = "${clip.likes}",
                         tint = if (clip.liked) Color(0xFF0080FF) else Color.White,
                         onClick = onLike

@@ -63,13 +63,8 @@ import ru.itdo.app.data.model.PostTrack
 import ru.itdo.app.data.model.User
 
 /**
- * Лента. По прямому запросу вёрстка/палитра приложения теперь следует
- * iOS-клиенту (minibleyz/itdo-ios), а не бежевой "тёплой бумаге" веба —
- * см. ItdoLight*/ItdoDark* в ui/theme/Color.kt, значения взяты из
- * ITDOApp/Views/Components/DesignTokens.swift. Системные же виджеты
- * (навигация, меню, индикаторы) остаются на Material 3 Expressive —
- * это то, на чём уже построен весь остальной Android-код, просто
- * перекрашенный в эту палитру, а не переписанный на кастомные вью.
+ * Feed screen - follows iOS client palette (DesignTokens.swift).
+ * Uses Material 3 Expressive widgets with ITDO color scheme.
  */
 @Composable
 fun FeedScreen(container: AppContainer) {

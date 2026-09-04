@@ -1,0 +1,7 @@
+ru.itdo.app-pngs-0 /home/work/.openclaw/workspace/itdo-project/itdo-android/app/build/generated/res/pngs/debug
+ru.itdo.app-updated_navigation_xml-1 /home/work/.openclaw/workspace/itdo-project/itdo-android/app/build/generated/updated_navigation_xml/debug
+ru.itdo.app-packageDebugResources-2 /home/work/.openclaw/workspace/itdo-project/itdo-android/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+ru.itdo.app-packageDebugResources-3 /home/work/.openclaw/workspace/itdo-project/itdo-android/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+ru.itdo.app-debug-4 /home/work/.openclaw/workspace/itdo-project/itdo-android/app/build/intermediates/merged_res/debug/mergeDebugResources
+ru.itdo.app-debug-5 /home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/debug/res
+ru.itdo.app-main-6 /home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/res
