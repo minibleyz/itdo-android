@@ -1,0 +1,120 @@
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.plugin.compose")
+}
+
+android {
+    namespace = "ru.itdo.app"
+    compileSdk = 37
+
+    // Фиксированный debug-кейстор (app/debug.keystore, закоммичен в репо),
+    // а не автогенерируемый ~/.android/debug.keystore. Без этого при сборке
+    // на разных машинах/CI получались РАЗНЫЕ debug-ключи — обновление
+    // (install поверх старой версии) падало с "signatures do not match",
+    // приходилось всегда удалять приложение перед переустановкой.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
+    defaultConfig {
+        applicationId = "ru.itdo.app"
+        minSdk = 23
+        targetSdk = 37
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Базовый URL API соцсети itdo.
+        buildConfigField("String", "API_BASE_URL", "\"https://itdo.bleyzos.ru/api/\"")
+        // Базовый URL самого сайта (без /api/) — нужен для WebView-страниц,
+        // которых нет в REST API и которые проще переиспользовать из веба
+        // (сейчас — ai-agent.html, см. ui/agent/AgentScreen.kt).
+        buildConfigField("String", "SITE_BASE_URL", "\"https://itdo.bleyzos.ru/\"")
+        // hCaptcha site key — тот же, что используется на вебе (см. login.html).
+        buildConfigField("String", "HCAPTCHA_SITE_KEY", "\"5f92e784-d356-42ce-8244-5672a768ae26\"")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    // jvmTarget для Kotlin больше не задаётся отдельно: со встроенным
+    // в AGP 9 Kotlin-компилятором он по умолчанию берётся из
+    // compileOptions.targetCompatibility (см. миграционный гайд
+    // https://developer.android.com/build/migrate-to-built-in-kotlin).
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+}
+
+dependencies {
+    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
+    implementation("androidx.activity:activity-compose:1.10.0")
+
+    implementation(platform("androidx.compose:compose-bom:2026.06.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    // Material 3 Expressive API (ButtonGroup, expressive shapes/motion, новые
+    // list items и т.д.) доступны только в alpha-ветке 1.5.0 — стабильный
+    // material3 сейчас 1.4.0 и Expressive не содержит. Версия зафиксирована
+    // явно (а не через BOM), т.к. BOM ещё не тянет alpha-релизы material3.
+    implementation("androidx.compose.material3:material3:1.5.0-alpha24")
+    implementation("androidx.compose.material:material-icons-extended")
+    // Downloadable Fonts (Google Fonts) — шрифт Unbounded для логотипа "ITDO"
+    // на экране логина (см. ui/theme/Type.kt). Версия управляется compose-bom.
+    // Работает только там, где есть Google Play Services (см.
+    // core/DeviceServices.kt) — на Huawei/Honor без GMS отключается сам.
+    implementation("androidx.compose.ui:ui-text-google-fonts")
+
+    // ---- Определение GMS/HMS на устройстве (core/DeviceServices.kt) ----
+    // Только "базовая" проверка доступности, без Maps/Auth/Push и т.п. —
+    // этого достаточно, чтобы понять, живы ли Google Play Services.
+    implementation("com.google.android.gms:play-services-base:18.5.0")
+    // HMS Core Base SDK — тот же смысл, но для Huawei/Honor устройств без
+    // Google (EMUI/MagicOS). Публичный артефакт, требует репозитория
+    // Huawei (см. settings.gradle.kts), учётка/agconnect-services.json
+    // для одной только этой проверки доступности не нужны.
+    implementation("com.huawei.hms:base:6.12.0.300")
+
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    implementation("androidx.navigation:navigation-compose:2.8.9")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.0")
+
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+}
