@@ -76,7 +76,8 @@ private fun CallRow(call: Call) {
         ) {
             Icon(
                 when {
-                    call.callType == "video" -> Icons.Default.Videocam
+                    // Поле в модели Call называется "type", а не "callType".
+                    call.type == "video" -> Icons.Default.Videocam
                     call.status == "missed" -> Icons.Default.CallEnd
                     else -> Icons.Default.Call
                 },
