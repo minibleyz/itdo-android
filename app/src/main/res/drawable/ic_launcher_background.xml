@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Точный фон официальной иконки сайта (assets/icon-512.png), измерен напрямую
+  из pixel-данных PNG (RGBA 18,19,24 внутри круга) — это цвет самого рисунка,
+  отличается от цвета theme-color в manifest.json (#1a1816, цвет сплэш-экрана PWA).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#121318"
+        android:pathData="M0,0h108v108h-108z" />
+</vector>

@@ -1,0 +1,271 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="ru.itdo.app"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+7-->INJECTED
+8        android:minSdkVersion="23"
+8-->INJECTED
+9        android:targetSdkVersion="37" />
+9-->INJECTED
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:4:5-67
+11-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:5:5-79
+12-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:5:22-76
+13
+14    <permission
+14-->[androidx.core:core:1.19.0-rc01] /home/work/.gradle/caches/9.3.1/transforms/904dba4e95b79c3660a4a94d4c7968de/transformed/core-1.19.0-rc01/AndroidManifest.xml:22:5-24:47
+15        android:name="ru.itdo.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+15-->[androidx.core:core:1.19.0-rc01] /home/work/.gradle/caches/9.3.1/transforms/904dba4e95b79c3660a4a94d4c7968de/transformed/core-1.19.0-rc01/AndroidManifest.xml:23:9-81
+16        android:protectionLevel="signature" />
+16-->[androidx.core:core:1.19.0-rc01] /home/work/.gradle/caches/9.3.1/transforms/904dba4e95b79c3660a4a94d4c7968de/transformed/core-1.19.0-rc01/AndroidManifest.xml:24:9-44
+17
+18    <uses-permission android:name="ru.itdo.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+18-->[androidx.core:core:1.19.0-rc01] /home/work/.gradle/caches/9.3.1/transforms/904dba4e95b79c3660a4a94d4c7968de/transformed/core-1.19.0-rc01/AndroidManifest.xml:26:5-97
+18-->[androidx.core:core:1.19.0-rc01] /home/work/.gradle/caches/9.3.1/transforms/904dba4e95b79c3660a4a94d4c7968de/transformed/core-1.19.0-rc01/AndroidManifest.xml:26:22-94
+19
+20    <queries>
+20-->[com.huawei.hms:device:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/c14d31ee61172ff7c83ebfe7e627f34b/transformed/device-6.12.0.300/AndroidManifest.xml:14:5-21:15
+21        <intent>
+21-->[com.huawei.hms:device:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/c14d31ee61172ff7c83ebfe7e627f34b/transformed/device-6.12.0.300/AndroidManifest.xml:15:9-17:18
+22            <action android:name="com.huawei.hms.core.aidlservice" />
+22-->[com.huawei.hms:device:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/c14d31ee61172ff7c83ebfe7e627f34b/transformed/device-6.12.0.300/AndroidManifest.xml:16:13-70
+22-->[com.huawei.hms:device:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/c14d31ee61172ff7c83ebfe7e627f34b/transformed/device-6.12.0.300/AndroidManifest.xml:16:21-67
+23        </intent>
+24        <intent>
+24-->[com.huawei.hms:device:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/c14d31ee61172ff7c83ebfe7e627f34b/transformed/device-6.12.0.300/AndroidManifest.xml:18:9-20:18
+25            <action android:name="com.huawei.hms.core" />
+25-->[com.huawei.hms:device:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/c14d31ee61172ff7c83ebfe7e627f34b/transformed/device-6.12.0.300/AndroidManifest.xml:19:13-58
+25-->[com.huawei.hms:device:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/c14d31ee61172ff7c83ebfe7e627f34b/transformed/device-6.12.0.300/AndroidManifest.xml:19:21-55
+26        </intent>
+27
+28        <package android:name="com.huawei.works" />
+28-->[com.huawei.hms:network-common:6.0.11.300] /home/work/.gradle/caches/9.3.1/transforms/b280147f6b990e888ef91ad3cc1d0de0/transformed/network-common-6.0.11.300/AndroidManifest.xml:12:9-52
+28-->[com.huawei.hms:network-common:6.0.11.300] /home/work/.gradle/caches/9.3.1/transforms/b280147f6b990e888ef91ad3cc1d0de0/transformed/network-common-6.0.11.300/AndroidManifest.xml:12:18-49
+29    </queries>
+30
+31    <application
+31-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:7:5-25:19
+32        android:allowBackup="true"
+32-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:8:9-35
+33        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+33-->[androidx.core:core:1.19.0-rc01] /home/work/.gradle/caches/9.3.1/transforms/904dba4e95b79c3660a4a94d4c7968de/transformed/core-1.19.0-rc01/AndroidManifest.xml:28:18-86
+34        android:debuggable="true"
+35        android:extractNativeLibs="false"
+35-->INJECTED
+36        android:icon="@mipmap/ic_launcher"
+36-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:9:9-43
+37        android:label="@string/app_name"
+37-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:11:9-41
+38        android:roundIcon="@mipmap/ic_launcher_round"
+38-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:10:9-54
+39        android:theme="@style/Theme.Itdo"
+39-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:12:9-42
+40        android:usesCleartextTraffic="false" >
+40-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:13:9-45
+41        <activity
+41-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:15:9-24:20
+42            android:name="ru.itdo.app.MainActivity"
+42-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:16:13-41
+43            android:exported="true"
+43-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:17:13-36
+44            android:label="@string/app_name"
+44-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:18:13-45
+45            android:theme="@style/Theme.Itdo" >
+45-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:19:13-46
+46            <intent-filter>
+46-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:20:13-23:29
+47                <action android:name="android.intent.action.MAIN" />
+47-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:21:17-69
+47-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:21:25-66
+48
+49                <category android:name="android.intent.category.LAUNCHER" />
+49-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:22:17-77
+49-->/home/work/.openclaw/workspace/itdo-project/itdo-android/app/src/main/AndroidManifest.xml:22:27-74
+50            </intent-filter>
+51        </activity>
+52        <activity
+52-->[com.google.android.gms:play-services-base:18.5.0] /home/work/.gradle/caches/9.3.1/transforms/095d4ac6fdb630cbe212ab0dc11341cd/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:9-173
+53            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+53-->[com.google.android.gms:play-services-base:18.5.0] /home/work/.gradle/caches/9.3.1/transforms/095d4ac6fdb630cbe212ab0dc11341cd/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:19-85
+54            android:exported="false"
+54-->[com.google.android.gms:play-services-base:18.5.0] /home/work/.gradle/caches/9.3.1/transforms/095d4ac6fdb630cbe212ab0dc11341cd/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:146-170
+55            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+55-->[com.google.android.gms:play-services-base:18.5.0] /home/work/.gradle/caches/9.3.1/transforms/095d4ac6fdb630cbe212ab0dc11341cd/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:86-145
+56
+57        <meta-data
+57-->[com.google.android.gms:play-services-basement:18.4.0] /home/work/.gradle/caches/9.3.1/transforms/c7fcaa39b6fda688e1b27a9eefc2042b/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:9-122
+58            android:name="com.google.android.gms.version"
+58-->[com.google.android.gms:play-services-basement:18.4.0] /home/work/.gradle/caches/9.3.1/transforms/c7fcaa39b6fda688e1b27a9eefc2042b/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:20-65
+59            android:value="@integer/google_play_services_version" />
+59-->[com.google.android.gms:play-services-basement:18.4.0] /home/work/.gradle/caches/9.3.1/transforms/c7fcaa39b6fda688e1b27a9eefc2042b/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:66-119
+60
+61        <activity
+61-->[androidx.compose.ui:ui-tooling-android:1.12.0-beta01] /home/work/.gradle/caches/9.3.1/transforms/6d490a7e0ab8926b3e7d03cb415b7c96/transformed/ui-tooling/AndroidManifest.xml:23:9-25:39
+62            android:name="androidx.compose.ui.tooling.PreviewActivity"
+62-->[androidx.compose.ui:ui-tooling-android:1.12.0-beta01] /home/work/.gradle/caches/9.3.1/transforms/6d490a7e0ab8926b3e7d03cb415b7c96/transformed/ui-tooling/AndroidManifest.xml:24:13-71
+63            android:exported="true" />
+63-->[androidx.compose.ui:ui-tooling-android:1.12.0-beta01] /home/work/.gradle/caches/9.3.1/transforms/6d490a7e0ab8926b3e7d03cb415b7c96/transformed/ui-tooling/AndroidManifest.xml:25:13-36
+64
+65        <provider
+65-->[androidx.emoji2:emoji2:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/a3b017b059ed133efdf81cb6fcff9fea/transformed/emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
+66            android:name="androidx.startup.InitializationProvider"
+66-->[androidx.emoji2:emoji2:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/a3b017b059ed133efdf81cb6fcff9fea/transformed/emoji2-1.4.0/AndroidManifest.xml:25:13-67
+67            android:authorities="ru.itdo.app.androidx-startup"
+67-->[androidx.emoji2:emoji2:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/a3b017b059ed133efdf81cb6fcff9fea/transformed/emoji2-1.4.0/AndroidManifest.xml:26:13-68
+68            android:exported="false" >
+68-->[androidx.emoji2:emoji2:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/a3b017b059ed133efdf81cb6fcff9fea/transformed/emoji2-1.4.0/AndroidManifest.xml:27:13-37
+69            <meta-data
+69-->[androidx.emoji2:emoji2:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/a3b017b059ed133efdf81cb6fcff9fea/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
+70                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+70-->[androidx.emoji2:emoji2:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/a3b017b059ed133efdf81cb6fcff9fea/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
+71                android:value="androidx.startup" />
+71-->[androidx.emoji2:emoji2:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/a3b017b059ed133efdf81cb6fcff9fea/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
+72            <meta-data
+72-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/work/.gradle/caches/9.3.1/transforms/f2945b496b0459bfde13f5bffd2c22ad/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:29:13-31:52
+73                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+73-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/work/.gradle/caches/9.3.1/transforms/f2945b496b0459bfde13f5bffd2c22ad/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:30:17-78
+74                android:value="androidx.startup" />
+74-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/work/.gradle/caches/9.3.1/transforms/f2945b496b0459bfde13f5bffd2c22ad/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:31:17-49
+75            <meta-data
+75-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+76                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+76-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+77                android:value="androidx.startup" />
+77-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+78        </provider>
+79
+80        <uses-library
+80-->[androidx.window:window:1.5.0] /home/work/.gradle/caches/9.3.1/transforms/1fc3594e7834c4ec0abf1190a0e60080/transformed/window-1.5.0/AndroidManifest.xml:23:9-25:40
+81            android:name="androidx.window.extensions"
+81-->[androidx.window:window:1.5.0] /home/work/.gradle/caches/9.3.1/transforms/1fc3594e7834c4ec0abf1190a0e60080/transformed/window-1.5.0/AndroidManifest.xml:24:13-54
+82            android:required="false" />
+82-->[androidx.window:window:1.5.0] /home/work/.gradle/caches/9.3.1/transforms/1fc3594e7834c4ec0abf1190a0e60080/transformed/window-1.5.0/AndroidManifest.xml:25:13-37
+83        <uses-library
+83-->[androidx.window:window:1.5.0] /home/work/.gradle/caches/9.3.1/transforms/1fc3594e7834c4ec0abf1190a0e60080/transformed/window-1.5.0/AndroidManifest.xml:26:9-28:40
+84            android:name="androidx.window.sidecar"
+84-->[androidx.window:window:1.5.0] /home/work/.gradle/caches/9.3.1/transforms/1fc3594e7834c4ec0abf1190a0e60080/transformed/window-1.5.0/AndroidManifest.xml:27:13-51
+85            android:required="false" />
+85-->[androidx.window:window:1.5.0] /home/work/.gradle/caches/9.3.1/transforms/1fc3594e7834c4ec0abf1190a0e60080/transformed/window-1.5.0/AndroidManifest.xml:28:13-37
+86
+87        <activity
+87-->[androidx.compose.ui:ui-test-manifest:1.12.0-beta01] /home/work/.gradle/caches/9.3.1/transforms/9c5b9e2bae84c06d1ef8abc63221a82a/transformed/ui-test-manifest-1.12.0-beta01/AndroidManifest.xml:23:9-26:79
+88            android:name="androidx.activity.ComponentActivity"
+88-->[androidx.compose.ui:ui-test-manifest:1.12.0-beta01] /home/work/.gradle/caches/9.3.1/transforms/9c5b9e2bae84c06d1ef8abc63221a82a/transformed/ui-test-manifest-1.12.0-beta01/AndroidManifest.xml:24:13-63
+89            android:exported="true"
+89-->[androidx.compose.ui:ui-test-manifest:1.12.0-beta01] /home/work/.gradle/caches/9.3.1/transforms/9c5b9e2bae84c06d1ef8abc63221a82a/transformed/ui-test-manifest-1.12.0-beta01/AndroidManifest.xml:25:13-36
+90            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+90-->[androidx.compose.ui:ui-test-manifest:1.12.0-beta01] /home/work/.gradle/caches/9.3.1/transforms/9c5b9e2bae84c06d1ef8abc63221a82a/transformed/ui-test-manifest-1.12.0-beta01/AndroidManifest.xml:26:13-76
+91
+92        <receiver
+92-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+93            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+93-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+94            android:directBootAware="false"
+94-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+95            android:enabled="true"
+95-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+96            android:exported="true"
+96-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+97            android:permission="android.permission.DUMP" >
+97-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+98            <intent-filter>
+98-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+99                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+99-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+99-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+100            </intent-filter>
+101            <intent-filter>
+101-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+102                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+102-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+102-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+103            </intent-filter>
+104            <intent-filter>
+104-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+105                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+105-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+105-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+106            </intent-filter>
+107            <intent-filter>
+107-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+108                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+108-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+108-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/work/.gradle/caches/9.3.1/transforms/0bdb20229dda62ac6e7f624de6ca7f38/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+109            </intent-filter>
+110        </receiver> <!-- 为后续统计第三方app集成了哪些Kit，因此需要Kit在自己的AndroidManifest.xml文件中定义业务标签元数据 -->
+111        <meta-data
+111-->[com.huawei.hms:base:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/a33b7d1e821f70d16ad0ba114a65e9d7/transformed/base-6.12.0.300/AndroidManifest.xml:15:9-17:47
+112            android:name="com.huawei.hms.client.service.name:base"
+112-->[com.huawei.hms:base:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/a33b7d1e821f70d16ad0ba114a65e9d7/transformed/base-6.12.0.300/AndroidManifest.xml:16:13-67
+113            android:value="base:6.12.0.300" /> <!-- SDK依赖的HMSCore的最低api level元数据 -->
+113-->[com.huawei.hms:base:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/a33b7d1e821f70d16ad0ba114a65e9d7/transformed/base-6.12.0.300/AndroidManifest.xml:17:13-44
+114        <meta-data
+114-->[com.huawei.hms:base:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/a33b7d1e821f70d16ad0ba114a65e9d7/transformed/base-6.12.0.300/AndroidManifest.xml:20:9-22:33
+115            android:name="com.huawei.hms.min_api_level:base:hmscore"
+115-->[com.huawei.hms:base:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/a33b7d1e821f70d16ad0ba114a65e9d7/transformed/base-6.12.0.300/AndroidManifest.xml:21:13-69
+116            android:value="1" /> <!-- 用于判断是否集成了本lib -->
+116-->[com.huawei.hms:base:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/a33b7d1e821f70d16ad0ba114a65e9d7/transformed/base-6.12.0.300/AndroidManifest.xml:22:13-30
+117        <meta-data
+117-->[com.huawei.hms:availableupdate:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/664c9763e1527180ee3ca0208cab5852/transformed/availableupdate-6.12.0.300/AndroidManifest.xml:17:9-19:35
+118            android:name="availableLoaded"
+118-->[com.huawei.hms:availableupdate:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/664c9763e1527180ee3ca0208cab5852/transformed/availableupdate-6.12.0.300/AndroidManifest.xml:18:13-43
+119            android:value="yes" />
+119-->[com.huawei.hms:availableupdate:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/664c9763e1527180ee3ca0208cab5852/transformed/availableupdate-6.12.0.300/AndroidManifest.xml:19:13-32
+120
+121        <activity
+121-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:10:9-21:20
+122            android:name="com.huawei.hms.activity.BridgeActivity"
+122-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:11:13-66
+123            android:configChanges="orientation|locale|layoutDirection|fontScale|screenSize|smallestScreenSize|screenLayout|uiMode"
+123-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:12:13-131
+124            android:excludeFromRecents="true"
+124-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:13:13-46
+125            android:exported="false"
+125-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:14:13-37
+126            android:hardwareAccelerated="true"
+126-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:15:13-47
+127            android:screenOrientation="behind"
+127-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:16:13-47
+128            android:theme="@style/Base_Translucent" >
+128-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:17:13-52
+129            <meta-data
+129-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:18:13-20:77
+130                android:name="hwc-theme"
+130-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:19:17-41
+131                android:value="androidhwext:style/Theme.Emui.Translucent" />
+131-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:20:17-74
+132        </activity>
+133        <activity
+133-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:22:9-26:20
+134            android:name="com.huawei.hms.activity.EnableServiceActivity"
+134-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:23:13-73
+135            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
+135-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:24:13-106
+136            android:exported="false" >
+136-->[com.huawei.hms:ui:6.12.0.300] /home/work/.gradle/caches/9.3.1/transforms/5bb174b8fb044e8f57d45811c9b4d616/transformed/ui-6.12.0.300/AndroidManifest.xml:25:13-37
+137        </activity>
+138
+139        <provider
+139-->[com.huawei.agconnect:agconnect-core:1.8.1.300] /home/work/.gradle/caches/9.3.1/transforms/3fc93243ac723deb4584409bc8bd117a/transformed/agconnect-core-1.8.1.300/AndroidManifest.xml:11:9-14:40
+140            android:name="com.huawei.agconnect.core.provider.AGConnectInitializeProvider"
+140-->[com.huawei.agconnect:agconnect-core:1.8.1.300] /home/work/.gradle/caches/9.3.1/transforms/3fc93243ac723deb4584409bc8bd117a/transformed/agconnect-core-1.8.1.300/AndroidManifest.xml:12:13-90
+141            android:authorities="ru.itdo.app.AGCInitializeProvider"
+141-->[com.huawei.agconnect:agconnect-core:1.8.1.300] /home/work/.gradle/caches/9.3.1/transforms/3fc93243ac723deb4584409bc8bd117a/transformed/agconnect-core-1.8.1.300/AndroidManifest.xml:13:13-73
+142            android:exported="false" />
+142-->[com.huawei.agconnect:agconnect-core:1.8.1.300] /home/work/.gradle/caches/9.3.1/transforms/3fc93243ac723deb4584409bc8bd117a/transformed/agconnect-core-1.8.1.300/AndroidManifest.xml:14:13-37
+143
+144        <service
+144-->[com.huawei.agconnect:agconnect-core:1.8.1.300] /home/work/.gradle/caches/9.3.1/transforms/3fc93243ac723deb4584409bc8bd117a/transformed/agconnect-core-1.8.1.300/AndroidManifest.xml:16:9-18:40
+145            android:name="com.huawei.agconnect.core.ServiceDiscovery"
+145-->[com.huawei.agconnect:agconnect-core:1.8.1.300] /home/work/.gradle/caches/9.3.1/transforms/3fc93243ac723deb4584409bc8bd117a/transformed/agconnect-core-1.8.1.300/AndroidManifest.xml:17:13-70
+146            android:exported="false" />
+146-->[com.huawei.agconnect:agconnect-core:1.8.1.300] /home/work/.gradle/caches/9.3.1/transforms/3fc93243ac723deb4584409bc8bd117a/transformed/agconnect-core-1.8.1.300/AndroidManifest.xml:18:13-37
+147    </application>
+148
+149</manifest>

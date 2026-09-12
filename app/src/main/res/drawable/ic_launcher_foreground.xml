@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Точная векторная трассировка официального лого сайта (assets/icon-512.png),
+  масштабирована в 2 раза относительно центра (54,54) — исходная версия
+  занимала почти всю safe zone (⌀66dp из 108dp), что смотрелось слишком крупно.
+    — центр рисунка: (54, 54) в viewport 108 (не менялся)
+    — кольцо: радиус 12.4 (было 24.8), толщина 4.75 (было 9.5)
+    — точка в центре: радиус 5.1 (было 10.2), тот же центр, что и у кольца
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Разомкнутое кольцо -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.75"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M41.87,56.58 A12.4,12.4 0 1 1 60.39,64.63" />
+    <!-- Центральная точка -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,54 m-5.1,0 a5.1,5.1 0 1 1 10.2,0 a5.1,5.1 0 1 1 -10.2,0" />
+</vector>
