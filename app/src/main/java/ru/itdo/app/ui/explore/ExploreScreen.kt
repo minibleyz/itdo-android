@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CapsuleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -27,6 +26,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import coil.compose.AsyncImage
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ru.itdo.app.core.AppContainer
 import ru.itdo.app.data.model.Post
@@ -84,8 +84,20 @@ fun ExploreScreen(
             .onFailure { error = it.message }
         trendingLoading = false
         // Load people suggestions
+        // fetchSuggestions() возвращает List<UserSuggestion> (укороченная модель
+        // без bio/isNuksta) — приводим к полноценному User для переиспользования PeopleRow.
         runCatching { container.repository.fetchSuggestions() }
-            .onSuccess { peopleList = it.users }
+            .onSuccess { response ->
+                peopleList = response.users.map { u ->
+                    User(
+                        id = u.id,
+                        username = u.username,
+                        name = u.name,
+                        avatar = u.avatar,
+                        isVerified = u.isVerified
+                    )
+                }
+            }
     }
 
     Scaffold(
@@ -162,8 +174,11 @@ fun ExploreScreen(
                         } else {
                             LazyColumn(contentPadding = PaddingValues(top = 12.dp, bottom = 110.dp)) {
                                 items(trendingPosts, key = { it.id }) { post ->
-                                    PostCardCompact(post, onOpenAuthor = onOpenAuthor)
-                                        .padding(horizontal = 16.dp)
+                                    PostCardCompact(
+                                        post,
+                                        onOpenAuthor = onOpenAuthor,
+                                        modifier = Modifier.padding(horizontal = 16.dp)
+                                    )
                                 }
                             }
                         }
@@ -195,8 +210,10 @@ fun ExploreScreen(
     }
 }
 
+// weight() — расширение RowScope, поэтому функция должна быть его extension,
+// а не принимать обычный Modifier: иначе .weight(1f) не резолвится.
 @Composable
-private fun TabSegment(title: String, selected: Boolean, onClick: () -> Unit) {
+private fun RowScope.TabSegment(title: String, selected: Boolean, onClick: () -> Unit) {
     Box(
         Modifier
             .weight(1f)
@@ -223,8 +240,8 @@ private fun TabSegment(title: String, selected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun PostCardCompact(post: Post, onOpenAuthor: (Int) -> Unit) {
-    Column(Modifier.padding(vertical = 10.dp)) {
+private fun PostCardCompact(post: Post, onOpenAuthor: (Int) -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier.padding(vertical = 10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = post.author?.avatar,
