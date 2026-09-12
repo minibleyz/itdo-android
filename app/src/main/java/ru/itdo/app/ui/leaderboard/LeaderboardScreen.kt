@@ -1,6 +1,7 @@
 package ru.itdo.app.ui.leaderboard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -71,8 +72,10 @@ fun LeaderboardScreen(
     }
 }
 
+// weight() — расширение RowScope, поэтому функция должна быть его extension,
+// а не принимать обычный Modifier: иначе .weight(1f) не резолвится.
 @Composable
-private fun TabSegment(title: String, selected: Boolean, onClick: () -> Unit) {
+private fun RowScope.TabSegment(title: String, selected: Boolean, onClick: () -> Unit) {
     Box(
         Modifier
             .weight(1f)
