@@ -187,11 +187,12 @@ private fun getNotificationIcon(type: String?): androidx.compose.ui.graphics.vec
         "comment" -> Icons.Default.ChatBubble
         "repost" -> Icons.Default.Repeat
         "follow" -> Icons.Default.PersonAdd
-        "mention" -> Icons.Default.At
+        // В Material Icons нет иконок 'At'/'Bell' — используем существующие аналоги.
+        "mention" -> Icons.Default.AlternateEmail
         "gift" -> Icons.Default.CardGiftcard
         "stream_like" -> Icons.Default.Favorite
         "donate" -> Icons.Default.MonetizationOn
-        else -> Icons.Default.Bell
+        else -> Icons.Default.Notifications
     }
 }
 
