@@ -94,7 +94,7 @@ dependencies {
     // HMS Core Base SDK — тот же смысл, но для Huawei/Honor устройств без
     // Google (EMUI/MagicOS). Публичный артефакт, требует репозитория
     // Huawei (см. settings.gradle.kts), учётка/agconnect-services.json
-    // для одной только этой проверки доступности не нужны.
+    // для одной только этой проверки доступности не нужна.
     implementation("com.huawei.hms:base:6.12.0.300")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
@@ -114,10 +114,13 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Биометрия (отпечаток пальца / Face Unlock) — Android equivalent of iOS Face ID / Touch ID
-    implementation("androidx.biometric:biometric:1.2.0")
+    // ВНИМАНИЕ: 1.2.0 в Maven не существует (была только 1.2.0-alpha05).
+    // Приложение написано под API 1.4.x, поэтому берём актуальную альфу
+    // этой ветки, а не откатываемся на стабильную 1.1.0 (там другой API).
+    implementation("androidx.biometric:biometric:1.4.0-alpha06")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.compose.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 }
