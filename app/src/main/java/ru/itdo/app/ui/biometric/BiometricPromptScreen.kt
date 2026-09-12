@@ -2,8 +2,8 @@ package ru.itdo.app.ui.biometric
 
 import android.os.Build
 import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricManager.Authenticatable.BIOMETRIC_STRONG
-import androidx.biometric.BiometricManager.Authenticatable.DEVICE_CREDENTIAL
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import kotlin.concurrent.thread
 
 /**
@@ -35,11 +36,14 @@ fun BiometricPromptScreen(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+    // BiometricPrompt требует FragmentActivity, а не произвольный Context —
+    // ComponentActivity (база для Compose-активностей) наследуется от него.
+    val activity = context as FragmentActivity
     var authResult by remember { mutableStateOf<AuthResult?>(null) }
 
     LaunchedEffect(Unit) {
         val biometricPrompt = BiometricPrompt(
-            context,
+            activity,
             ContextCompat.getMainExecutor(context),
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
