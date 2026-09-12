@@ -79,6 +79,7 @@ dependencies {
     // list items и т.д.) доступны только в alpha-ветке 1.5.0 — стабильный
     // material3 сейчас 1.4.0 и Expressive не содержит. Версия зафиксирована
     // явно (а не через BOM), т.к. BOM ещё не тянет alpha-релизы material3.
+    // ЭТУ ВЕРСИЮ НЕ ТРОГАТЬ — дизайн-система (Material 3 Expressive) на ней завязана.
     implementation("androidx.compose.material3:material3:1.5.0-alpha24")
     implementation("androidx.compose.material:material-icons-extended")
     // Downloadable Fonts (Google Fonts) — шрифт Unbounded для логотипа "ITDO"
@@ -115,9 +116,12 @@ dependencies {
 
     // Биометрия (отпечаток пальца / Face Unlock) — Android equivalent of iOS Face ID / Touch ID
     // ВНИМАНИЕ: 1.2.0 в Maven не существует (была только 1.2.0-alpha05).
-    // Приложение написано под API 1.4.x, поэтому берём актуальную альфу
-    // этой ветки, а не откатываемся на стабильную 1.1.0 (там другой API).
-    implementation("androidx.biometric:biometric:1.4.0-alpha06")
+    // Код (BiometricPromptScreen.kt) использует классический API —
+    // BiometricManager.Authenticators, BiometricPrompt.AuthenticationCallback,
+    // PromptInfo.Builder — этот API в 1.4.0-alpha* вырезан при редизайне
+    // на AuthenticationRequest/Result. Это ОТДЕЛЬНАЯ библиотека от material3
+    // и на дизайн-систему никак не влияет. Берём стабильную 1.1.0.
+    implementation("androidx.biometric:biometric:1.1.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
