@@ -1,6 +1,8 @@
 package ru.itdo.app.ui.bookmarks
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -68,7 +70,7 @@ fun BookmarksScreen(
                 }
                 else -> {
                     LazyColumn(
-                        contentPadding = PaddingValues(horizontal = 16.dp, bottom = 40.dp),
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 40.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         items(bookmarks, key = { it.id }) { post ->
