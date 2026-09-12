@@ -239,13 +239,14 @@ class ItdoRepository(
     suspend fun following(id: String, page: Int = 1): UserListResponse =
         safeCall({ UserListResponse(error = it) }) { api.getFollowing(id, page) }
 
-    /** Обновить профиль (name, username, email). */
-    suspend fun updateProfile(name: String? = null, username: String? = null, email: String? = null): UserProfileResponse =
+    /** Обновить профиль (name, username, email, bio). */
+    suspend fun updateProfile(name: String? = null, username: String? = null, email: String? = null, bio: String? = null): UserProfileResponse =
         safeCall({ UserProfileResponse(error = it) }) {
             val body = mutableMapOf<String, @JvmSuppressWildcards Any>()
             if (name != null) body["name"] = name
             if (username != null) body["username"] = username
             if (email != null) body["email"] = email
+            if (bio != null) body["bio"] = bio
             api.updateProfile(body)
         }
 
