@@ -46,7 +46,7 @@ fun ArticlesScreen(
                 EmptyState()
             } else {
                 LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, bottom = 40.dp),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 40.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(articles, key = { it.id }) { article ->
