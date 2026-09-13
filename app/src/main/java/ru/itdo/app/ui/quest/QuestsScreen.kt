@@ -61,7 +61,11 @@ fun QuestsScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(quests, key = { it.id }) { quest ->
-                        QuestCard(quest, onClaim = {
+                        // ВАЖНО: "claiming" — это state из QuestsScreen(), а
+                        // QuestCard() — отдельная @Composable-функция без
+                        // доступа к нему (unresolved reference 'claiming').
+                        // Передаём текущее значение явным параметром.
+                        QuestCard(quest, claimingId = claiming, onClaim = {
                             if (!quest.completed || quest.claimed) return@QuestCard
                             scope.launch {
                                 claiming = quest.id
@@ -77,7 +81,7 @@ fun QuestsScreen(
 }
 
 @Composable
-private fun QuestCard(quest: Quest, onClaim: () -> Unit) {
+private fun QuestCard(quest: Quest, claimingId: String?, onClaim: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -133,12 +137,12 @@ private fun QuestCard(quest: Quest, onClaim: () -> Unit) {
                 } else if (quest.completed) {
                     Button(
                         onClick = onClaim,
-                        enabled = claiming != quest.id,
+                        enabled = claimingId != quest.id,
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00BA7C))
                     ) {
-                        if (claiming == quest.id) {
+                        if (claimingId == quest.id) {
                             CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp))
                         } else {
                             Text("Получить", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
