@@ -30,6 +30,7 @@ import ru.itdo.app.ui.calls.CallsScreen
 import ru.itdo.app.ui.chats.ChatScreen
 import ru.itdo.app.ui.chats.ChatsListScreen
 import ru.itdo.app.ui.clips.ClipsScreen
+import ru.itdo.app.ui.components.ComingSoonScreen
 import ru.itdo.app.ui.components.ItdoLoadingScreen
 import ru.itdo.app.ui.explore.ExploreScreen
 import ru.itdo.app.ui.feed.CommentsScreen
@@ -54,12 +55,14 @@ private const val ROUTE_LOGIN = "login"
 private const val ROUTE_REGISTER = "register"
 private const val ROUTE_MAIN = "main"
 
+// 5 табов — 1:1 с iOS (RootView.swift): Лента, Поиск, Увед., Сообщения, Ещё.
+// "Профиль" отдельным табом больше не является — он переехал в "Ещё",
+// как и в iOS-версии.
 private sealed class MainTab(val route: String, val label: String, val icon: ImageVector) {
     object Feed : MainTab("feed", "Лента", Icons.Filled.Home)
     object Explore : MainTab("explore", "Поиск", Icons.Filled.Search)
     object Notifications : MainTab("notifications", "Увед.", Icons.Filled.Notifications)
-    object Chats : MainTab("chats", "Чаты", Icons.Filled.ChatBubble)
-    object Profile : MainTab("profile", "Профиль", Icons.Filled.Person)
+    object Chats : MainTab("chats", "Сообщения", Icons.Filled.ChatBubble)
 }
 private const val ROUTE_MORE = "more"
 
@@ -120,15 +123,25 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
         }
     }
 
-    val tabs = listOf(MainTab.Feed, MainTab.Explore, MainTab.Notifications, MainTab.Chats, MainTab.Profile)
+    val tabs = listOf(MainTab.Feed, MainTab.Explore, MainTab.Notifications, MainTab.Chats)
 
     Scaffold(bottomBar = {
         val backStack by nav.currentBackStackEntryAsState()
         val current = backStack?.destination?.route
+        // "Ещё" считается выбранной не только на самом экране "more", но и
+        // на любом из вложенных в неё разделов (профиль, настройки, клипы,
+        // кошелёк и т.д.) — иначе после перехода вглубь пилюля "Ещё"
+        // выглядела бы невыбранной, хотя пользователь всё ещё в этой ветке.
+        val moreRoutes = setOf(
+            ROUTE_MORE, "profile", "editProfile", "verification", "settings",
+            "calls", "support", "admin", "streams", "clips", "agent",
+            "leaderboard", "quests", "playlists", "articles", "gifts",
+            "wallet", "nuksta", "bookmarks", "hiddenAuthors", "pixel"
+        )
         PillNavigationBar(
             tabs = tabs,
             current = current,
-            onMoreSelected = current == ROUTE_MORE,
+            onMoreSelected = current != null && current in moreRoutes,
             onTabClick = { tab -> nav.navigate(tab.route) { launchSingleTop = true; popUpTo(MainTab.Feed.route) } },
             onMoreClick = { nav.navigate(ROUTE_MORE) { launchSingleTop = true; popUpTo(MainTab.Feed.route) } }
         )
@@ -149,14 +162,6 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
             composable(MainTab.Chats.route) {
                 ChatsListScreen(container) { convId -> nav.navigate("chat/$convId") }
             }
-            composable(MainTab.Profile.route) {
-                ProfileScreen(container) {
-                    scope.launch {
-                        container.repository.logout()
-                        onLoggedOut()
-                    }
-                }
-            }
 
             // More screen routes
             composable(ROUTE_MORE) {
@@ -165,6 +170,16 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
             composable("chat/{id}", arguments = listOf(navArgument("id") { type = NavType.IntType })) { backStackEntry ->
                 val id = backStackEntry.arguments?.getInt("id") ?: 0
                 ChatScreen(container, id)
+            }
+            // Профиль — раньше был главным табом, теперь открывается только
+            // из "Ещё" (как ProfileView в iOS MoreView), поведение то же.
+            composable("profile") {
+                ProfileScreen(container) {
+                    scope.launch {
+                        container.repository.logout()
+                        onLoggedOut()
+                    }
+                }
             }
             composable("agent") { AgentScreen(container) }
             composable("pixel") { PixelBattleScreen(container) }
@@ -281,6 +296,11 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
                     onOpenStream = { streamId -> /* TODO: stream player */ }
                 )
             }
+            // Клипы — экран уже реализован (ClipsScreen), но раньше не был
+            // подключён к навигации. Теперь открывается из "Ещё".
+            composable("clips") {
+                ClipsScreen(container) { uid -> nav.navigate("userProfile/$uid") }
+            }
             composable("wallet") {
                 WalletScreen(
                     balance = coins,
@@ -327,6 +347,14 @@ private fun MainTabs(container: AppContainer, onLoggedOut: () -> Unit) {
                     container = container,
                     onNavigateBack = { nav.popBackStack() }
                 )
+            }
+            // Разделы, которых пока нет на Android (нет экрана вообще) —
+            // вместо краша/белого экрана показываем заглушку.
+            composable("playlists") {
+                ComingSoonScreen(title = "Плейлисты", onNavigateBack = { nav.popBackStack() })
+            }
+            composable("gifts") {
+                ComingSoonScreen(title = "Подарки", onNavigateBack = { nav.popBackStack() })
             }
         }
     }
