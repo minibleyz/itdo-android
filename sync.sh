@@ -18,7 +18,7 @@ git add .
 if git diff-index --quiet HEAD --; then
     echo "✅ No changes to commit."
 else
-    # Создаем коммит с уникальным ID для запуска Workflow
+    # Создаём коммит с уникальным ID для запуска Workflow
     COMMIT_ID=$(date +%s)
     git commit -m "Sync files from workspace [#$COMMIT_ID]"
     echo "📦 Changes committed with ID: $COMMIT_ID"

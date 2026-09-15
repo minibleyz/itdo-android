@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ru.itdo.app.BuildConfig
 import ru.itdo.app.core.AppContainer
-import ru.itdo.app.ui.theme.rememberUnboundedFontFamily
 
 /**
  * Бэкенд требует hCaptcha для каждого входа по паролю без TOTP (см.
@@ -125,17 +124,18 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Логотип-вордмарк — шрифт Unbounded (Google Fonts, Downloadable
-        // Fonts, см. ui/theme/Type.kt), начертание Black (900), в семье
-        // также зарегистрирован Bold (700) как более лёгкий вариант.
-        // rememberUnboundedFontFamily() сам откатывается на системный
-        // шрифт, если на устройстве нет Google Play Services (типично для
-        // Huawei/Honor без GMS — см. core/DeviceServices.kt).
+        // Приветствие — как в iOS-версии (надпись ITDO убрана)
         Text(
-            "ITDO",
+            "С возвращением 👋",
             style = MaterialTheme.typography.headlineMedium.copy(
-                fontFamily = rememberUnboundedFontFamily(),
                 fontWeight = FontWeight.Black
+            )
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            "Войдите в свой аккаунт",
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         )
         Spacer(Modifier.height(24.dp))
@@ -154,15 +154,7 @@ fun LoginScreen(
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-        // Поле кода 2FA больше не показывается на самом экране — как и на iOS,
-        // оно всплывает отдельной модалкой, только когда сервер реально
-        // ответил two_factor_required (401) на попытку логина без totp_code
-        // (см. api/auth/login.php). До этого момента у пользователя может и
-        // не быть 2FA вообще, так что поле было лишним шумом на экране.
 
-        // hCaptcha обязателен только при входе без TOTP (см. requireLoginCaptcha
-        // в api/auth/login.php). Пока идёт обычный логин (без 2FA-модалки),
-        // totp всегда пуст на этом экране — виджет нужен постоянно здесь.
         Spacer(Modifier.height(8.dp))
         key(captchaKey) {
             HCaptchaWidget(

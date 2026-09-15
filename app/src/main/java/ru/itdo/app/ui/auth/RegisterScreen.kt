@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package ru.itdo.app.ui.auth
 
 import androidx.compose.foundation.layout.*
@@ -7,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -14,16 +13,20 @@ import ru.itdo.app.BuildConfig
 import ru.itdo.app.core.AppContainer
 
 /**
- * hCaptcha обязательна для каждой регистрации (см. api/auth/register.php).
- * Sitekey подтягивается с сервера (auth/registration_status.php), фоллбэк —
- * BuildConfig.HCAPTCHA_SITE_KEY.
+ * Регистрация — 1:1 с iOS RegisterView.
+ * Поля: Имя, Логин, Email (необязательно), Пароль.
+ * hCaptcha обязателен (см. api/auth/register.php).
+ * Sitekey подтягивается с сервера (auth/registration_status.php),
+ * фоллбэк — BuildConfig.HCAPTCHA_SITE_KEY.
  */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun RegisterScreen(
     container: AppContainer,
     onRegistered: () -> Unit,
     onBack: () -> Unit
 ) {
+    var name by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -40,18 +43,62 @@ fun RegisterScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Регистрация", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            "Регистрация",
+            style = MaterialTheme.typography.headlineMedium.copy(
+                fontWeight = FontWeight.Black
+            )
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            "Создайте новый аккаунт",
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        )
         Spacer(Modifier.height(24.dp))
 
-        OutlinedTextField(username, { username = it }, label = { Text("Логин") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Имя") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
         Spacer(Modifier.height(8.dp))
-        OutlinedTextField(email, { email = it }, label = { Text("Email") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Логин") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
         Spacer(Modifier.height(8.dp))
-        OutlinedTextField(password, { password = it }, label = { Text("Пароль") }, singleLine = true, visualTransformation = PasswordVisualTransformation(), modifier = Modifier.fillMaxWidth())
+
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email (необязательно)") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Пароль") },
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(Modifier.height(8.dp))
         key(captchaKey) {
@@ -68,13 +115,21 @@ fun RegisterScreen(
         }
 
         Spacer(Modifier.height(16.dp))
+
         Button(
             contentPadding = ButtonDefaults.contentPaddingFor(ButtonDefaults.LargeContainerHeight),
             onClick = {
-                error = null; loading = true
+                error = null
+                loading = true
                 scope.launch {
                     val resp = runCatching {
-                        container.repository.register(username.trim(), email.trim(), password, captchaToken)
+                        container.repository.register(
+                            username = username.trim(),
+                            email = email.trim(),
+                            password = password,
+                            captcha = captchaToken,
+                            name = name.trim()
+                        )
                     }
                     loading = false
                     resp.onSuccess {
@@ -90,14 +145,17 @@ fun RegisterScreen(
                     }.onFailure { error = it.message ?: "Ошибка сети" }
                 }
             },
-            enabled = !loading && username.isNotBlank() && email.isNotBlank() &&
-                password.isNotBlank() && captchaToken != null,
+            enabled = !loading && username.isNotBlank() && password.isNotBlank() && captchaToken != null,
             modifier = Modifier.fillMaxWidth().heightIn(ButtonDefaults.LargeContainerHeight)
         ) {
-            if (loading) LoadingIndicator(modifier = Modifier.size(24.dp))
+            if (loading) CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
             else Text("Зарегистрироваться", style = ButtonDefaults.textStyleFor(ButtonDefaults.LargeContainerHeight))
         }
 
-        TextButton(onClick = onBack) { Text("Назад ко входу") }
+        Spacer(Modifier.height(8.dp))
+
+        TextButton(onClick = onBack) {
+            Text("Назад ко входу")
+        }
     }
 }
