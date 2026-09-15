@@ -92,9 +92,9 @@ class ItdoRepository(
             resp
         }
 
-    suspend fun register(username: String, email: String, password: String, captcha: String?): AuthResponse =
+    suspend fun register(username: String, email: String, password: String, captcha: String?, name: String? = null): AuthResponse =
         safeCall({ AuthResponse(error = it) }) {
-            val resp = parseAuth(api.register(RegisterRequest(username, email, password, captcha)))
+            val resp = parseAuth(api.register(RegisterRequest(username, email, password, name, captcha)))
             if (resp.accessToken != null) {
                 tokenStore.save(resp.accessToken, resp.refreshToken)
             }
