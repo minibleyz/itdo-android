@@ -18,8 +18,16 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      # android-actions/setup-android@v3 убран: по умолчанию он пытается
+      # поставить пакет "tools" (legacy Android SDK Tools), которого уже
+      # несколько лет нет в репозитории Google — sdkmanager падает с
+      # "Failed to find package 'tools'" ещё до сборки.
+      # На ubuntu-latest Android SDK уже предустановлен (ANDROID_HOME /
+      # ANDROID_SDK_ROOT заданы, лицензии приняты), а Gradle/AGP сам
+      # докачает недостающие platform/build-tools под compileSdk из
+      # app/build.gradle.kts (встроенный SDK auto-download AGP).
+      - name: Accept Android SDK licenses
+        run: yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
