@@ -115,8 +115,15 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Liquid Glass эффекты (Backdrop) для BottomTabs — из AndroidLiquidGlass
-    implementation("io.github.kyant0:backdrop:2.0.1")
-    implementation("io.github.kyant0:shapes:1.2.1")
+    // ВНИМАНИЕ: зафиксировано на 2.0.0 (не 2.0.1) и shapes на 1.2.0 (не 1.2.1)
+    // намеренно. 2.0.1/1.2.1 собраны Kotlin-метаданными 2.4.0, а встроенный
+    // в AGP 9.1.1 Kotlin-компилятор читает метаданные максимум до 2.3.0 —
+    // сборка падала с "Module was compiled with an incompatible version of
+    // Kotlin" и каскадом "Unresolved reference" по всему проекту.
+    // API между 2.0.0 и 2.0.1 не менялся (только апдейт Compose до 1.12.0
+    // в 2.0.1), так что даунгрейд безопасен для кода.
+    implementation("io.github.kyant0:backdrop:2.0.0")
+    implementation("io.github.kyant0:shapes:1.2.0")
 
     // Биометрия (отпечаток пальца / Face Unlock) — Android equivalent of iOS Face ID / Touch ID
     // ВНИМАНИЕ: 1.2.0 в Maven не существует (была только 1.2.0-alpha05).
