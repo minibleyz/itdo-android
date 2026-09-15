@@ -114,6 +114,10 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // Liquid Glass эффекты (Backdrop) для BottomTabs — из AndroidLiquidGlass
+    implementation("io.github.kyant0:backdrop:2.0.1")
+    implementation("io.github.kyant0:shapes:1.2.1")
+
     // Биометрия (отпечаток пальца / Face Unlock) — Android equivalent of iOS Face ID / Touch ID
     // ВНИМАНИЕ: 1.2.0 в Maven не существует (была только 1.2.0-alpha05).
     // Код (BiometricPromptScreen.kt) использует классический API —
