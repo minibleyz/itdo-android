@@ -258,6 +258,9 @@ data class RegisterRequest(
     val username: String,
     val email: String,
     val password: String,
+    // Отображаемое имя пользователя (см. RegisterScreen.kt / iOS RegisterView) —
+    // бэкенд ждёт его в поле "name" (см. api/auth/register.php).
+    val name: String? = null,
     // ВАЖНО: см. комментарий в LoginRequest — бэкенд ждёт hcaptcha_token
     // (см. api/auth/register.php).
     @SerializedName("hcaptcha_token") val hcaptchaToken: String? = null
